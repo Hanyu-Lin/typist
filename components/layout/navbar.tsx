@@ -1,5 +1,6 @@
 "use client";
 import { Logo } from "@/components/logo";
+import { ModeToggle } from "@/components/mode-toggle";
 import { useTimerStore } from "@/store/timer-store";
 import { motion } from "framer-motion";
 
@@ -18,10 +19,11 @@ const Navbar: React.FC = () => {
           variants={navbarVariants}
           animate="visible"
           exit="hidden"
-          className="z-50 bg-background items-center p-8 w-2/3 mx-auto animate-fade-in"
+          className="flex z-50 bg-background items-center justify-between p-2 md:p-8 w-2/3 mx-auto animate-fade-in"
         >
           <Logo />
-          {/* TODO: Theme dropdown meny */}
+
+          <ModeToggle />
         </motion.nav>
       ) : (
         <nav className="h-12"></nav>

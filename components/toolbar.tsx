@@ -46,8 +46,8 @@ const TimerToolbar = () => {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   className={cn(
-                    "px-4 py-2 rounded-lg font-semibold",
-                    time === value ? "bg-primary text-white" : ""
+                    "px-4 py-2 rounded-lg font-semibold text-primary",
+                    time === value ? "bg-orange-400 " : ""
                   )}
                 >
                   {value}

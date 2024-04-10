@@ -31,10 +31,10 @@ const Footer: React.FC = () => {
               </Button>
             </div>
 
-            <p className="text-gray-500 text-center md:text-start">
+            <p className="text-primary text-center md:text-start ">
               A project by{" "}
               <a
-                className="font-semibold text-gray-600 underline-offset-4 transition-colors hover:underline"
+                className="font-semibold text-orange-400 underline-offset-4 transition-colors hover:underline"
                 href="https://github.com/Hanyu-Lin"
                 target="_blank"
                 rel="noopener noreferrer"
