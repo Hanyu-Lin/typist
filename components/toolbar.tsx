@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { useTypingStore } from "@/store/typing-store";
 import { useTimerStore } from "@/store/timer-store";
 import { cn } from "@/lib/utils";
-import { setLocalStorage } from "@/lib/storageHelper";
+import { setLocalStorage } from "@/lib/storage-helper";
 
 const TimerToolbar = () => {
   const { inputRef, resetTypingState } = useTypingStore();

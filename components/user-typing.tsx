@@ -8,7 +8,7 @@ import { MousePointer2 } from "lucide-react";
 import { useRef, useEffect, useState } from "react";
 import Results from "@/components/results";
 import RestartButton from "@/components/restart-button";
-import { setLocalStorage, getLocalStorage } from "@/lib/storageHelper";
+import { setLocalStorage, getLocalStorage } from "@/lib/storage-helper";
 
 export default function TypingTest() {
   const {
