@@ -74,9 +74,6 @@ dependencies:
   react-dom:
     specifier: ^18
     version: 18.2.0(react@18.2.0)
-  relationships:
-    specifier: link:convex-helpers/server/relationships
-    version: link:convex-helpers/server/relationships
   tailwind-merge:
     specifier: ^2.2.2
     version: 2.2.2
