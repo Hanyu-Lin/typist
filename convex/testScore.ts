@@ -1,7 +1,7 @@
 import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { query, mutation } from "./_generated/server";
 
-export const insertTestScore = mutation({
+export const create = mutation({
   args: {
     userId: v.string(),
     wpm: v.number(),
@@ -57,5 +57,26 @@ export const insertTestScore = mutation({
     }
 
     return newTestScore;
+  },
+});
+
+export const fetchRecentTestScores = query({
+  args: {
+    userId: v.string(),
+    limit: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    if (!identity || identity.subject !== args.userId) {
+      throw new Error("Unauthorized or invalid user");
+    }
+
+    const testScores = await ctx.db
+      .query("testScore")
+      .filter((q) => q.eq("userId", args.userId))
+      .order("desc") // Order by creation time descending by default
+      .take(args.limit);
+    return testScores;
   },
 });

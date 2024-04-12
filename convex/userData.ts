@@ -1,7 +1,6 @@
-import { v } from "convex/values";
 import { query } from "./_generated/server";
 
-export const getUserData = query({
+export const get = query({
   args: {},
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -21,26 +20,5 @@ export const getUserData = query({
     }
 
     return userData;
-  },
-});
-
-export const fetchRecentTestScores = query({
-  args: {
-    userId: v.string(),
-    limit: v.number(),
-  },
-  handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-
-    if (!identity || identity.subject !== args.userId) {
-      throw new Error("Unauthorized or invalid user");
-    }
-
-    const testScores = await ctx.db
-      .query("testScore")
-      .filter((q) => q.eq("userId", args.userId))
-      .order("desc") // Order by creation time descending by default
-      .take(args.limit);
-    return testScores;
   },
 });
