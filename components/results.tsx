@@ -1,4 +1,3 @@
-import { calculateTypingMetrics } from "@/lib/utils";
 import {
   CardTitle,
   CardDescription,
@@ -9,23 +8,14 @@ import {
 import React from "react";
 import { CircleCheck, CircleX, Keyboard } from "lucide-react";
 import { Hint } from "@/components/hint";
-interface ResultsProps {
-  typedHistory: string[];
-  wordList: string[];
-  testDurationSeconds: number;
-}
+import { TypingSpeedMetrics } from "@/lib/utils";
 
-const Results: React.FC<ResultsProps> = ({
-  typedHistory,
-  wordList,
-  testDurationSeconds,
+const Results: React.FC<TypingSpeedMetrics> = ({
+  wpm,
+  raw,
+  accuracy,
+  charactersStats,
 }) => {
-  const { wpm, raw, accuracy, charactersStats } = calculateTypingMetrics(
-    typedHistory,
-    wordList,
-    testDurationSeconds
-  );
-
   return (
     <Card className="flex flex-col w-1/2 max-w-lg items-center justify-center animate-slow-fade-in">
       <CardHeader className="pb-0 items-center">

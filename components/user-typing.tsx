@@ -9,6 +9,10 @@ import { useRef, useEffect, useState } from "react";
 import Results from "@/components/results";
 import RestartButton from "@/components/restart-button";
 import { setLocalStorage, getLocalStorage } from "@/lib/storage-helper";
+import { calculateTypingMetrics } from "@/lib/utils";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useAuth } from "@clerk/nextjs";
 
 export default function TypingTest() {
   const {
@@ -23,6 +27,8 @@ export default function TypingTest() {
     resetTypingState,
   } = useTypingStore();
   const { time, timer, timerId, setTimer, startTimer } = useTimerStore();
+  const mutate = useMutation(api.testScore.create);
+  const { userId } = useAuth();
 
   const inputRef = useRef<HTMLDivElement>(null);
   const restartButtonRef = useRef<HTMLButtonElement>(null);
@@ -37,6 +43,26 @@ export default function TypingTest() {
     inputRef.current?.focus();
     setInputRef(inputRef);
   }, []);
+
+  // Submit test results to the database when the test is completed
+  useEffect(() => {
+    if (userId && !timer) {
+      const { wpm, raw, accuracy } = calculateTypingMetrics(
+        typedHistory,
+        wordList,
+        time
+      );
+
+      mutate({
+        userId,
+        wpm,
+        raw,
+        accuracy,
+        testDurationSeconds: time,
+        wordsTyped: typedHistory.length,
+      });
+    }
+  }, [timer]);
 
   useEffect(() => {
     if (activeWordRef.current) {
@@ -125,11 +151,7 @@ export default function TypingTest() {
           </div>
         </div>
       ) : (
-        <Results
-          typedHistory={typedHistory}
-          wordList={wordList}
-          testDurationSeconds={time}
-        />
+        <Results {...calculateTypingMetrics(typedHistory, wordList, time)} />
       )}
       <RestartButton ref={restartButtonRef} focusInput={focusInput} />
     </div>

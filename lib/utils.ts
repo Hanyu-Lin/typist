@@ -10,7 +10,7 @@ export const generateWords = (n: number): string[] => {
   return faker.word.words(n).split(" ");
 };
 
-interface TypingSpeedMetrics {
+export interface TypingSpeedMetrics {
   wpm: number;
   raw: number;
   charactersStats: {
