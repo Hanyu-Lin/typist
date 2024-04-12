@@ -75,7 +75,7 @@ export const fetchRecentTestScores = query({
     const testScores = await ctx.db
       .query("testScore")
       .withIndex("by_userId", (q) => q.eq("userId", args.userId))
-      .order("desc") // Order by creation time descending by default
+      .order("asc") // Order by creation time by default
       .take(args.limit);
     return testScores;
   },
