@@ -27,7 +27,7 @@ const Navbar: React.FC = () => {
           variants={navbarVariants}
           animate="visible"
           exit="hidden"
-          className="flex z-50 bg-background items-center justify-between p-2 md:p-8 w-2/3 mx-auto animate-fade-in"
+          className="flex z-50 bg-background items-center justify-between p-2 pt-8 w-3/4 mx-auto animate-fade-in md:p-8"
         >
           <Logo />
 

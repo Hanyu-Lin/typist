@@ -21,7 +21,7 @@ const Footer: React.FC = () => {
           variants={footerVariants}
           animate="visible"
           exit="hidden"
-          className="mb-3 mt-auto z-50 bg-background items-center p-8 w-2/3 mx-auto animate-fade-in"
+          className="mb-3 mt-auto z-50 bg-background items-center w-3/4 mx-auto animate-fade-in md:p-8"
         >
           <div className=" flex gap-3 items-center justify-between ">
             <div className="flex items-center justify-center gap-2">
