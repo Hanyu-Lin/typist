@@ -1,4 +1,5 @@
 "use client";
+import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
 import Github from "@/components/ui/icons/Github";
 import { useTimerStore } from "@/store/timer-store";
@@ -23,7 +24,8 @@ const Footer: React.FC = () => {
           className="mb-3 mt-auto z-50 bg-background items-center p-8 w-2/3 mx-auto animate-fade-in"
         >
           <div className=" flex gap-3 items-center justify-between ">
-            <div className="flex items-center justify-center ">
+            <div className="flex items-center justify-center gap-2">
+              <ModeToggle />
               <Button size="icon" variant="outline">
                 <a href="https://github.com/Hanyu-Lin/typist" target="_blank">
                   <Github />

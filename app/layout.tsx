@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
 import { Suspense } from "react";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
 import { ThemeProvider } from "@/providers/theme-provider";
+import { ConvexClerkProvider } from "@/providers/convex-clerk-provider";
+import { Loading } from "@/components/loading";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,19 +21,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <Suspense fallback={<div>Loading...</div>}>
+    <html lang="en" suppressHydrationWarning>
+      <Suspense fallback={<Loading />}>
         <body className={inter.className}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Navbar />
-            {children}
-            <Footer />
-          </ThemeProvider>
+          <ConvexClerkProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Navbar />
+              {children}
+              <Footer />
+            </ThemeProvider>
+          </ConvexClerkProvider>
         </body>
       </Suspense>
     </html>

@@ -1,3 +1,4 @@
+"use client";
 import React, { useMemo } from "react";
 import { cn } from "@/lib/utils";
 
@@ -5,7 +6,7 @@ interface CharacterProps {
   char: string;
   typedChar: string | undefined;
   isActive: boolean;
-  registeredChar: string; // Fixed typo in prop name for consistency
+  registeredChar: string;
 }
 
 const Character: React.FC<CharacterProps> = ({
