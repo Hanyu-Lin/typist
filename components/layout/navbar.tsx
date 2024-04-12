@@ -1,20 +1,24 @@
 "use client";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { useTimerStore } from "@/store/timer-store";
 import { SignInButton, UserButton } from "@clerk/clerk-react";
 import { useConvexAuth } from "convex/react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const Navbar: React.FC = () => {
   const { timerId } = useTimerStore();
   const { isAuthenticated, isLoading } = useConvexAuth();
-
+  const pathname = usePathname();
+  const isDashboard = pathname === "/dashboard";
   const navbarVariants = {
     hidden: { opacity: 0, y: -20, transition: { duration: 0.5 } },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
   };
+
   return (
     <>
       {!timerId ? (
@@ -28,7 +32,7 @@ const Navbar: React.FC = () => {
           <Logo />
 
           <div className="flex items-center justify-center gap-2">
-            {isLoading && <p>Loading...</p>}
+            {isLoading && <Spinner />}
             {!isLoading && !isAuthenticated && (
               <SignInButton mode="modal">
                 <Button variant={"ghost"} size={"sm"}>
@@ -39,7 +43,11 @@ const Navbar: React.FC = () => {
             {!isLoading && isAuthenticated && (
               <>
                 <Button variant={"ghost"} size={"sm"} asChild>
-                  <Link href="/dashboard">Dashboard</Link>
+                  {isDashboard ? (
+                    <Link href="/">Home</Link>
+                  ) : (
+                    <Link href="/dashboard">Dashboard</Link>
+                  )}
                 </Button>
                 <UserButton afterSignOutUrl="/" />
               </>
