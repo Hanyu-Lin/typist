@@ -110,3 +110,22 @@ function calculateAccuracy(
 // Regex to match valid characters for typing test
 // Only alphanumeric characters, hyphen, period, comma, single quote, and space are allowed
 export const validCharacters = /^[a-zA-Z0-9\-.,' ]$/;
+
+export interface chartTestScore {
+  creationTime: number;
+  wpm: number;
+  raw: number;
+}
+
+export function formatChartData(
+  testScores: chartTestScore[]
+): { Month: string; WPM: number; RAW: number }[] {
+  return testScores.map((score) => ({
+    Month: new Date(score.creationTime).toLocaleDateString("en-US", {
+      month: "short",
+      year: "2-digit",
+    }),
+    WPM: score.wpm,
+    RAW: score.raw,
+  }));
+}
