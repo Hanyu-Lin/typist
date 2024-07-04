@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import Character from "./character";
 import { useTypingStore } from "@/store/typing-store";
 import Caret from "@/components/caret";
+import { useTimerStore } from "@/store/timer-store";
 
 interface WordProps {
   word: string;
@@ -16,6 +17,7 @@ interface WordProps {
 const Word = forwardRef<HTMLSpanElement, WordProps>(
   ({ word, isActive, index, isTyped, typedWord }, ref) => {
     const { typedHistory } = useTypingStore();
+    const { timerId } = useTimerStore();
 
     // Helper functions
     const computeRegisteredWord = () => (isTyped ? typedHistory[index] : "");
@@ -58,7 +60,9 @@ const Word = forwardRef<HTMLSpanElement, WordProps>(
 
     return (
       <span ref={ref} className={wordClassName}>
-        {isActive ? <Caret offset={typedWord.length} /> : null}
+        {isActive ? (
+          <Caret offset={typedWord.length} isBlinking={!timerId} />
+        ) : null}
         {word.split("").map((char, charIndex) => (
           <Character
             key={charIndex}
