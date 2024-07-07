@@ -1,13 +1,13 @@
-"use client";
-import MobileNotSupported from "@/components/mobile-not-supported";
-import TimerToolbar from "@/components/toolbar";
-import useDetectDevice from "@/hooks/useDetectDevice";
-import dynamic from "next/dynamic";
+'use client';
+import MobileNotSupported from '@/components/mobile-not-supported';
+import TimerToolbar from '@/components/toolbar';
+import useDetectDevice from '@/hooks/useDetectDevice';
+import dynamic from 'next/dynamic';
 const TypingTest = dynamic(
-  () => import("@/components/user-typing").then((t) => t.default),
+  () => import('@/components/user-typing').then((t) => t.default),
   {
     ssr: false,
-  }
+  },
 );
 
 export default function Home() {

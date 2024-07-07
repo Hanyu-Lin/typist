@@ -1,5 +1,5 @@
-import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
+import { v } from 'convex/values';
+import { query, mutation } from './_generated/server';
 
 export const create = mutation({
   args: {
@@ -14,11 +14,11 @@ export const create = mutation({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity || identity.subject !== args.userId) {
-      throw new Error("Unauthorized or invalid user");
+      throw new Error('Unauthorized or invalid user');
     }
 
     // Insert new test score
-    const newTestScore = await ctx.db.insert("testScore", {
+    const newTestScore = await ctx.db.insert('testScore', {
       userId: args.userId,
       wpm: args.wpm,
       raw: args.raw,
@@ -29,8 +29,8 @@ export const create = mutation({
 
     // Update user data with new test metrics
     const userData = await ctx.db
-      .query("userData")
-      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
+      .query('userData')
+      .withIndex('by_userId', (q) => q.eq('userId', args.userId))
       .unique();
 
     if (userData) {
@@ -45,7 +45,7 @@ export const create = mutation({
       await ctx.db.patch(userData._id, updatedMetrics);
     } else {
       // If no userData exists, consider creating a new record
-      await ctx.db.insert("userData", {
+      await ctx.db.insert('userData', {
         userId: args.userId,
         totalTestsTaken: 1,
         totalTimeSpent: args.testDurationSeconds,
@@ -69,13 +69,13 @@ export const fetchRecentTestScores = query({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity || identity.subject !== args.userId) {
-      throw new Error("Unauthorized or invalid user");
+      throw new Error('Unauthorized or invalid user');
     }
 
     const testScores = await ctx.db
-      .query("testScore")
-      .withIndex("by_userId", (q) => q.eq("userId", args.userId))
-      .order("asc") // Order by creation time by default
+      .query('testScore')
+      .withIndex('by_userId', (q) => q.eq('userId', args.userId))
+      .order('asc') // Order by creation time by default
       .take(args.limit);
     return testScores;
   },

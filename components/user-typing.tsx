@@ -1,18 +1,18 @@
-"use client";
-import Word from "@/components/word";
-import Countdown from "@/components/countdown";
-import { cn, validCharacters } from "@/lib/utils";
-import { useTimerStore } from "@/store/timer-store";
-import { useTypingStore } from "@/store/typing-store";
-import { MousePointer2 } from "lucide-react";
-import { useRef, useEffect, useState } from "react";
-import Results from "@/components/results";
-import RestartButton from "@/components/restart-button";
-import { setLocalStorage, getLocalStorage } from "@/lib/storage-helper";
-import { calculateTypingMetrics } from "@/lib/utils";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { useAuth } from "@clerk/nextjs";
+'use client';
+import Word from '@/components/word';
+import Countdown from '@/components/countdown';
+import { cn, validCharacters } from '@/lib/utils';
+import { useTimerStore } from '@/store/timer-store';
+import { useTypingStore } from '@/store/typing-store';
+import { MousePointer2 } from 'lucide-react';
+import { useRef, useEffect, useState } from 'react';
+import Results from '@/components/results';
+import RestartButton from '@/components/restart-button';
+import { setLocalStorage, getLocalStorage } from '@/lib/storage-helper';
+import { calculateTypingMetrics } from '@/lib/utils';
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import { useAuth } from '@clerk/nextjs';
 
 export default function TypingTest() {
   const {
@@ -36,13 +36,13 @@ export default function TypingTest() {
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
-    const storageTime = getLocalStorage("timer", 60);
+    const storageTime = getLocalStorage('timer', 60);
     setTimer(storageTime);
-    setLocalStorage("timer", storageTime);
+    setLocalStorage('timer', storageTime);
 
     inputRef.current?.focus();
     setInputRef(inputRef);
-  }, []);
+  }, [setInputRef, setTimer]);
 
   // Submit test results to the database when the test is completed
   useEffect(() => {
@@ -50,7 +50,7 @@ export default function TypingTest() {
       const { wpm, raw, accuracy } = calculateTypingMetrics(
         typedHistory,
         wordList,
-        time
+        time,
       );
 
       mutate({
@@ -62,13 +62,13 @@ export default function TypingTest() {
         wordsTyped: typedHistory.length,
       });
     }
-  }, [timer]);
+  }, [mutate, typedHistory, userId, wordList, time, timer]);
 
   useEffect(() => {
     if (activeWordRef.current) {
       activeWordRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
+        behavior: 'smooth',
+        block: 'center',
       });
     }
   }, [currWordIndex]);
@@ -77,7 +77,7 @@ export default function TypingTest() {
     const { key, metaKey } = e;
     e.preventDefault();
     if (!timer) {
-      if (key === "Tab") {
+      if (key === 'Tab') {
         resetTypingState();
       }
       return;
@@ -85,18 +85,18 @@ export default function TypingTest() {
     //Only start timer if it's not already running and the key is not Tab and the key is a letter
     if (
       !timerId &&
-      key !== "Tab" &&
+      key !== 'Tab' &&
       e.key.length === 1 &&
       /^[a-zA-Z]$/.test(e.key)
     )
       startTimer();
 
-    if (key === "Backspace") {
+    if (key === 'Backspace') {
       handleDelete(!!metaKey);
-    } else if (key === " ") {
-      if (typedWord === "") return;
+    } else if (key === ' ') {
+      if (typedWord === '') return;
       moveToNextWord();
-    } else if (key == "Tab") {
+    } else if (key == 'Tab') {
       restartButtonRef.current?.focus();
     } else if (e.key.length === 1 && validCharacters.test(e.key)) {
       setTypedWord(typedWord + e.key);
@@ -130,8 +130,8 @@ export default function TypingTest() {
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             className={cn(
-              "p-4 focus:outline-none cursor-text",
-              isFocused ? "blur-none" : "cursor-pointer blur-md"
+              'p-4 focus:outline-none cursor-text',
+              isFocused ? 'blur-none' : 'cursor-pointer blur-md',
             )}
           >
             <Countdown timer={timer} />

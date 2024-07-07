@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { generateWords } from "@/lib/utils";
+import { create } from 'zustand';
+import { generateWords } from '@/lib/utils';
 
 interface TypingState {
   currWordIndex: number;
@@ -17,23 +17,23 @@ interface TypingState {
 
 export const useTypingStore = create<TypingState>((set) => ({
   currWordIndex: 0,
-  typedWord: "",
+  typedWord: '',
   wordList: generateWords(250),
   typedHistory: [],
   inputRef: null,
   setInputRef: (inputRef) => set({ inputRef }),
   setTypedWord: (typedWord) => set({ typedWord }),
-  resetTypedWord: () => set({ typedWord: "" }),
+  resetTypedWord: () => set({ typedWord: '' }),
   moveToNextWord: () =>
     set((state) => ({
-      typedWord: "",
+      typedWord: '',
       currWordIndex: state.currWordIndex + 1,
       typedHistory: [...state.typedHistory, state.typedWord],
     })),
   handleDelete: (isMetaKey: boolean) =>
     set((state) => {
-      if (state.currWordIndex === 0 && state.typedWord === "") return {}; // No action if it's the first word and nothing is typed
-      if (state.typedWord === "") {
+      if (state.currWordIndex === 0 && state.typedWord === '') return {}; // No action if it's the first word and nothing is typed
+      if (state.typedWord === '') {
         // If nothing is typed, delete the last misstyped word.
         if (
           state.typedHistory[state.typedHistory.length - 1] ===
@@ -50,7 +50,7 @@ export const useTypingStore = create<TypingState>((set) => ({
       } else {
         if (isMetaKey) {
           return {
-            typedWord: "",
+            typedWord: '',
           };
         } else {
           return {
@@ -63,7 +63,7 @@ export const useTypingStore = create<TypingState>((set) => ({
     set({
       currWordIndex: 0,
       wordList: generateWords(100),
-      typedWord: "",
+      typedWord: '',
       typedHistory: [],
     }),
 }));

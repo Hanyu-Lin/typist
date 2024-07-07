@@ -1,5 +1,5 @@
-import { v } from "convex/values";
-import { defineSchema, defineTable } from "convex/server";
+import { v } from 'convex/values';
+import { defineSchema, defineTable } from 'convex/server';
 
 export default defineSchema({
   testScore: defineTable({
@@ -9,7 +9,7 @@ export default defineSchema({
     accuracy: v.number(),
     testDurationSeconds: v.number(),
     wordsTyped: v.number(),
-  }).index("by_userId", ["userId"]),
+  }).index('by_userId', ['userId']),
   userData: defineTable({
     userId: v.string(),
     totalTestsTaken: v.number(),
@@ -18,5 +18,5 @@ export default defineSchema({
     highestWpm: v.number(),
     highestRaw: v.number(),
     highestAccuracy: v.number(),
-  }).index("by_userId", ["userId"]),
+  }).index('by_userId', ['userId']),
 });

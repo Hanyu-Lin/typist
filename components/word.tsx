@@ -1,10 +1,10 @@
-"use client";
-import React, { forwardRef, useMemo } from "react";
-import { cn } from "@/lib/utils";
-import Character from "./character";
-import { useTypingStore } from "@/store/typing-store";
-import Caret from "@/components/caret";
-import { useTimerStore } from "@/store/timer-store";
+'use client';
+import React, { forwardRef, useCallback, useMemo } from 'react';
+import { cn } from '@/lib/utils';
+import Character from './character';
+import { useTypingStore } from '@/store/typing-store';
+import Caret from '@/components/caret';
+import { useTimerStore } from '@/store/timer-store';
 
 interface WordProps {
   word: string;
@@ -20,11 +20,16 @@ const Word = forwardRef<HTMLSpanElement, WordProps>(
     const { timerId } = useTimerStore();
 
     // Helper functions
-    const computeRegisteredWord = () => (isTyped ? typedHistory[index] : "");
-    const computeIsMistyped = (registeredWord: string) =>
-      isTyped && registeredWord !== word;
-    const computeHasExtraChars = (registeredWord: string) =>
-      isTyped && registeredWord.length > word.length;
+    const computeRegisteredWord = () => (isTyped ? typedHistory[index] : '');
+    const computeIsMistyped = useCallback(
+      (registeredWord: string) => isTyped && registeredWord !== word,
+      [isTyped, word],
+    );
+    const computeHasExtraChars = useCallback(
+      (registeredWord: string) =>
+        isTyped && registeredWord.length > word.length,
+      [isTyped, word],
+    );
 
     const registeredWord = useMemo(computeRegisteredWord, [
       typedHistory,
@@ -33,17 +38,17 @@ const Word = forwardRef<HTMLSpanElement, WordProps>(
     ]);
     const isMistyped = useMemo(
       () => computeIsMistyped(registeredWord),
-      [registeredWord, isTyped, word]
+      [registeredWord, computeIsMistyped],
     );
     const hasExtraChars = useMemo(
       () => computeHasExtraChars(registeredWord),
-      [registeredWord, isTyped, word]
+      [computeHasExtraChars, registeredWord],
     );
 
     const renderExtraCharacters = (baseWord: string, extraChars: string) => {
       return extraChars
         .slice(baseWord.length)
-        .split("")
+        .split('')
         .map((char, i) => (
           <span key={`extra-${i}`} className="text-red-500 opacity-75">
             {char}
@@ -54,8 +59,8 @@ const Word = forwardRef<HTMLSpanElement, WordProps>(
     // Conditional styling
     const wordClassName = useMemo(
       () =>
-        cn("relative mr-2", isMistyped ? "underline decoration-red-500" : ""),
-      [isMistyped]
+        cn('relative mr-2', isMistyped ? 'underline decoration-red-500' : ''),
+      [isMistyped],
     );
 
     return (
@@ -63,7 +68,7 @@ const Word = forwardRef<HTMLSpanElement, WordProps>(
         {isActive ? (
           <Caret offset={typedWord.length} isBlinking={!timerId} />
         ) : null}
-        {word.split("").map((char, charIndex) => (
+        {word.split('').map((char, charIndex) => (
           <Character
             key={charIndex}
             char={char}
@@ -76,7 +81,8 @@ const Word = forwardRef<HTMLSpanElement, WordProps>(
         {hasExtraChars && renderExtraCharacters(word, registeredWord)}
       </span>
     );
-  }
+  },
 );
 
+Word.displayName = 'Word';
 export default Word;

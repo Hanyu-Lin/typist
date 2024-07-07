@@ -1,4 +1,4 @@
-import { query } from "./_generated/server";
+import { query } from './_generated/server';
 
 export const get = query({
   args: {},
@@ -6,13 +6,13 @@ export const get = query({
     const identity = await ctx.auth.getUserIdentity();
 
     if (!identity) {
-      throw new Error("Unauthorized - No user identity available");
+      throw new Error('Unauthorized - No user identity available');
     }
 
     const userId = identity.subject;
     const userData = await ctx.db
-      .query("userData")
-      .withIndex("by_userId", (q) => q.eq("userId", userId))
+      .query('userData')
+      .withIndex('by_userId', (q) => q.eq('userId', userId))
       .unique();
 
     if (!userData) {

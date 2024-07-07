@@ -1,19 +1,19 @@
-"use client";
-import { Logo } from "@/components/logo";
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
-import { useTimerStore } from "@/store/timer-store";
-import { SignInButton, UserButton } from "@clerk/clerk-react";
-import { useConvexAuth } from "convex/react";
-import { motion } from "framer-motion";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+'use client';
+import { Logo } from '@/components/logo';
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
+import { useTimerStore } from '@/store/timer-store';
+import { SignInButton, UserButton } from '@clerk/clerk-react';
+import { useConvexAuth } from 'convex/react';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const Navbar: React.FC = () => {
   const { timerId } = useTimerStore();
   const { isAuthenticated, isLoading } = useConvexAuth();
   const pathname = usePathname();
-  const isDashboard = pathname === "/dashboard";
+  const isDashboard = pathname === '/dashboard';
   const navbarVariants = {
     hidden: { opacity: 0, y: -20, transition: { duration: 0.5 } },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
@@ -35,14 +35,14 @@ const Navbar: React.FC = () => {
             {isLoading && <Spinner />}
             {!isLoading && !isAuthenticated && (
               <SignInButton mode="modal">
-                <Button variant={"ghost"} size={"sm"}>
+                <Button variant={'ghost'} size={'sm'}>
                   Log in
                 </Button>
               </SignInButton>
             )}
             {!isLoading && isAuthenticated && (
               <>
-                <Button variant={"ghost"} size={"sm"} asChild>
+                <Button variant={'ghost'} size={'sm'} asChild>
                   {isDashboard ? (
                     <Link href="/">Home</Link>
                   ) : (

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { Progress } from "@/components/ui/progress";
-import { useEffect, useState } from "react";
+import { Progress } from '@/components/ui/progress';
+import { useEffect, useState } from 'react';
 
 export function Loading() {
   const [progress, setProgress] = useState(13);

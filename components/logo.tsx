@@ -1,5 +1,5 @@
-import { Keyboard } from "lucide-react";
-import Link from "next/link";
+import { Keyboard } from 'lucide-react';
+import Link from 'next/link';
 
 export const Logo = () => {
   return (

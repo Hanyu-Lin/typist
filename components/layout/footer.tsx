@@ -1,9 +1,9 @@
-"use client";
-import { ModeToggle } from "@/components/mode-toggle";
-import { Button } from "@/components/ui/button";
-import Github from "@/components/ui/icons/Github";
-import { useTimerStore } from "@/store/timer-store";
-import { motion } from "framer-motion";
+'use client';
+import { ModeToggle } from '@/components/mode-toggle';
+import { Button } from '@/components/ui/button';
+import Github from '@/components/ui/icons/Github';
+import { useTimerStore } from '@/store/timer-store';
+import { motion } from 'framer-motion';
 
 const Footer: React.FC = () => {
   const { timerId } = useTimerStore();
@@ -34,7 +34,7 @@ const Footer: React.FC = () => {
             </div>
 
             <p className="text-primary text-center md:text-start ">
-              A project by{" "}
+              A project by{' '}
               <a
                 className="font-semibold text-orange-400 underline-offset-4 transition-colors hover:underline"
                 href="https://github.com/Hanyu-Lin"
