@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Hint } from '@/components/hint';
 import { RotateCw } from 'lucide-react';
 import { useTimerStore } from '@/stores/timerStore';
-import { useTypingStore } from '@/stores/typing-store';
+import { useTypingStore } from '@/stores/typingStore';
 interface RestartButtonProps {
   focusInput: () => void;
 }

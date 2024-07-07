@@ -11,7 +11,6 @@ import { toast } from 'sonner';
 import type { RoomJoinedData } from '@/types';
 import { useUserStore } from '@/stores/userStore';
 import { useMembersStore } from '@/stores/membersStore';
-import { socket } from '@/lib/socket';
 import { createRoomSchema } from '@/lib/validations/createRoom';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,9 +20,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/Form';
-import { Input } from '@/components/ui/Input';
-import CopyButton from '@/components/CopyButton';
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import CopyButton from '@/components/copyButton';
 
 interface CreateRoomFormProps {
   roomId: string;
@@ -49,7 +48,7 @@ export default function CreateRoomForm({ roomId }: CreateRoomFormProps) {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(() => {})}
         className="flex flex-col gap-4"
       >
         <FormField

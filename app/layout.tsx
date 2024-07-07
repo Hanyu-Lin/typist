@@ -25,12 +25,7 @@ export default function RootLayout({
       <Suspense fallback={<Loading />}>
         <body className={inter.className}>
           <ConvexClerkProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
+            <ThemeProvider attribute="class">
               <Navbar />
               {children}
               <Footer />

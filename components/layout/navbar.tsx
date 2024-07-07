@@ -32,6 +32,9 @@ const Navbar: React.FC = () => {
           <Logo />
 
           <div className="flex items-center justify-center gap-2">
+            <Button variant={'ghost'} size={'sm'} asChild>
+              <Link href="/room">Mutiplayer</Link>
+            </Button>
             {isLoading && <Spinner />}
             {!isLoading && !isAuthenticated && (
               <SignInButton mode="modal">

@@ -2,7 +2,7 @@
 import { motion } from 'framer-motion';
 import { Clock } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
-import { useTypingStore } from '@/stores/typing-store';
+import { useTypingStore } from '@/stores/typingStore';
 import { useTimerStore } from '@/stores/timerStore';
 import { cn } from '@/lib/utils';
 import { setLocalStorage } from '@/lib/storage-helper';
