@@ -1,7 +1,7 @@
 import type { User } from '@/stores/userStore';
 
 export interface RoomJoinedData {
-  user: User;
+  ownerId: User;
   roomId: string;
   members: User[];
 }

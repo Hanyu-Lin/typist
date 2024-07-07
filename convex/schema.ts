@@ -19,4 +19,15 @@ export default defineSchema({
     highestRaw: v.number(),
     highestAccuracy: v.number(),
   }).index('by_userId', ['userId']),
+  room: defineTable({
+    roomId: v.string(),
+    ownerId: v.string(),
+    members: v.array(
+      v.object({
+        userId: v.string(),
+        username: v.string(),
+        progress: v.number(),
+      }),
+    ),
+  }).index('by_roomId', ['roomId']),
 });

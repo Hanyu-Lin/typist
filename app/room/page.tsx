@@ -15,7 +15,7 @@ import { useState, useEffect } from 'react';
 
 export const dynamic = 'force-dynamic';
 
-export default function Home() {
+export default function Room() {
   const [roomId, setRoomId] = useState<string>('');
 
   useEffect(() => {

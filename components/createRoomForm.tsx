@@ -1,16 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-
-import type { RoomJoinedData } from '@/types';
-import { useUserStore } from '@/stores/userStore';
-import { useMembersStore } from '@/stores/membersStore';
+import { User, useUserStore } from '@/stores/userStore';
 import { createRoomSchema } from '@/lib/validations/createRoom';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,6 +20,8 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import CopyButton from '@/components/copyButton';
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
 
 interface CreateRoomFormProps {
   roomId: string;
@@ -31,13 +30,27 @@ interface CreateRoomFormProps {
 type CreatRoomForm = z.infer<typeof createRoomSchema>;
 
 export default function CreateRoomForm({ roomId }: CreateRoomFormProps) {
+  const roomMutate = useMutation(api.room.create);
+  const userStore = useUserStore();
   const router = useRouter();
-
   const setUser = useUserStore((state) => state.setUser);
-  const setMembers = useMembersStore((state) => state.setMembers);
 
   const [isLoading, setIsLoading] = useState(false);
 
+  function onSubmit({ username }: CreatRoomForm) {
+    setIsLoading(true);
+    const owner: User = userStore.createUser(username);
+    try {
+      roomMutate({ roomId, owner });
+      setUser(owner);
+      router.push(`/room/${roomId}`);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+      setIsLoading(false);
+    }
+  }
   const form = useForm<CreatRoomForm>({
     resolver: zodResolver(createRoomSchema),
     defaultValues: {
@@ -48,7 +61,7 @@ export default function CreateRoomForm({ roomId }: CreateRoomFormProps) {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(() => {})}
+        onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col gap-4"
       >
         <FormField
