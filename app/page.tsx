@@ -1,5 +1,5 @@
 'use client';
-import MobileNotSupported from '@/components/mobile-not-supported';
+import MobileNotSupported from '@/components/mobileNotSupported';
 import TimerToolbar from '@/components/toolbar';
 import useDetectDevice from '@/hooks/useDetectDevice';
 import dynamic from 'next/dynamic';

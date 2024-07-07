@@ -2,9 +2,9 @@
 import React, { forwardRef, useCallback, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import Character from './character';
-import { useTypingStore } from '@/store/typing-store';
+import { useTypingStore } from '@/stores/typing-store';
 import Caret from '@/components/caret';
-import { useTimerStore } from '@/store/timer-store';
+import { useTimerStore } from '@/stores/timerStore';
 
 interface WordProps {
   word: string;

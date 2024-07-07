@@ -4,8 +4,8 @@ import React, { forwardRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Hint } from '@/components/hint';
 import { RotateCw } from 'lucide-react';
-import { useTimerStore } from '@/store/timer-store';
-import { useTypingStore } from '@/store/typing-store';
+import { useTimerStore } from '@/stores/timerStore';
+import { useTypingStore } from '@/stores/typing-store';
 interface RestartButtonProps {
   focusInput: () => void;
 }

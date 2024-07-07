@@ -2,8 +2,8 @@
 import Word from '@/components/word';
 import Countdown from '@/components/countdown';
 import { cn, validCharacters } from '@/lib/utils';
-import { useTimerStore } from '@/store/timer-store';
-import { useTypingStore } from '@/store/typing-store';
+import { useTimerStore } from '@/stores/timerStore';
+import { useTypingStore } from '@/stores/typing-store';
 import { MousePointer2 } from 'lucide-react';
 import { useRef, useEffect, useState } from 'react';
 import Results from '@/components/results';

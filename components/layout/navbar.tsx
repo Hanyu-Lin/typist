@@ -2,7 +2,7 @@
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
-import { useTimerStore } from '@/store/timer-store';
+import { useTimerStore } from '@/stores/timerStore';
 import { SignInButton, UserButton } from '@clerk/clerk-react';
 import { useConvexAuth } from 'convex/react';
 import { motion } from 'framer-motion';

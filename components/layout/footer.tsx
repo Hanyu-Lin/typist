@@ -1,8 +1,8 @@
 'use client';
-import { ModeToggle } from '@/components/mode-toggle';
+import { ModeToggle } from '@/components/modeToggle';
 import { Button } from '@/components/ui/button';
 import Github from '@/components/ui/icons/Github';
-import { useTimerStore } from '@/store/timer-store';
+import { useTimerStore } from '@/stores/timerStore';
 import { motion } from 'framer-motion';
 
 const Footer: React.FC = () => {
