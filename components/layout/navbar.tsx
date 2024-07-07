@@ -33,7 +33,7 @@ const Navbar: React.FC = () => {
 
           <div className="flex items-center justify-center gap-2">
             <Button variant={'ghost'} size={'sm'} asChild>
-              <Link href="/room">Mutiplayer</Link>
+              <Link href="/room">Multiplayer</Link>
             </Button>
             {isLoading && <Spinner />}
             {!isLoading && !isAuthenticated && (
