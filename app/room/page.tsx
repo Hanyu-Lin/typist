@@ -23,7 +23,7 @@ export default function Room() {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-between py-16 animate-fade-in">
+    <>
       <Card className="w-[90vw] max-w-[400px]">
         <CardHeader>
           <CardTitle>Create a room</CardTitle>
@@ -44,6 +44,6 @@ export default function Room() {
           <JoinRoomButtoon />
         </CardContent>
       </Card>
-    </div>
+    </>
   );
 }
