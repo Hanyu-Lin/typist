@@ -7,6 +7,7 @@ import { ThemeProvider } from '@/providers/theme-provider';
 import { ConvexClerkProvider } from '@/providers/convex-clerk-provider';
 import { Loading } from '@/components/loading';
 import './globals.css';
+import { Toaster } from 'sonner';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -29,6 +30,7 @@ export default function RootLayout({
               <Navbar />
               {children}
               <Footer />
+              <Toaster position="top-center" richColors />
             </ThemeProvider>
           </ConvexClerkProvider>
         </body>

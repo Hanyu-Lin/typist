@@ -22,11 +22,17 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useMutation } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 type JoinRoomForm = z.infer<typeof joinRoomSchema>;
 
 export default function JoinRoomButtoon() {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const joinRoom = useMutation(api.room.join);
 
   const form = useForm<JoinRoomForm>({
     resolver: zodResolver(joinRoomSchema),
@@ -38,6 +44,16 @@ export default function JoinRoomButtoon() {
 
   function onSubmit({ roomId, username }: JoinRoomForm) {
     setIsLoading(true);
+    try {
+      joinRoom({ roomId, username });
+      router.push(`/room/${roomId}`);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -64,7 +80,11 @@ export default function JoinRoomButtoon() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Username" {...field} />
+                    <Input
+                      placeholder="Username"
+                      autoComplete="off"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage className="text-xs" />
                 </FormItem>
@@ -77,7 +97,11 @@ export default function JoinRoomButtoon() {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Room ID" {...field} />
+                    <Input
+                      placeholder="Room ID"
+                      autoComplete="off"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage className="text-xs" />
                 </FormItem>
