@@ -22,6 +22,8 @@ import { Input } from '@/components/ui/input';
 import CopyButton from '@/components/copyButton';
 import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
+import { parseConvexError } from '@/lib/utils';
+import { ConvexError } from 'convex/values';
 
 interface CreateRoomFormProps {
   roomId: string;
@@ -37,17 +39,16 @@ export default function CreateRoomForm({ roomId }: CreateRoomFormProps) {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  function onSubmit({ username }: CreatRoomForm) {
+  async function onSubmit({ username }: CreatRoomForm) {
     setIsLoading(true);
     const owner: User = userStore.createUser(username);
     try {
-      roomMutate({ roomId, owner });
+      await roomMutate({ roomId, owner });
       setUser(owner);
       router.push(`/room/${roomId}`);
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
+      toast.error(parseConvexError(error));
+    } finally {
       setIsLoading(false);
     }
   }

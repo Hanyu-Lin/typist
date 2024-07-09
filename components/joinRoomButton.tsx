@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,6 +26,8 @@ import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { ConvexError } from 'convex/values';
+import { parseConvexError } from '@/lib/utils';
 
 type JoinRoomForm = z.infer<typeof joinRoomSchema>;
 
@@ -42,15 +44,13 @@ export default function JoinRoomButtoon() {
     },
   });
 
-  function onSubmit({ roomId, username }: JoinRoomForm) {
+  async function onSubmit({ roomId, username }: JoinRoomForm) {
     setIsLoading(true);
     try {
-      joinRoom({ roomId, username });
+      await joinRoom({ roomId, username });
       router.push(`/room/${roomId}`);
     } catch (error) {
-      if (error instanceof Error) {
-        toast.error(error.message);
-      }
+      toast.error(parseConvexError(error));
     } finally {
       setIsLoading(false);
     }

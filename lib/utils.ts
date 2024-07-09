@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { faker } from '@faker-js/faker';
+import { ConvexError } from 'convex/values';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -128,4 +129,10 @@ export function formatChartData(
     WPM: score.wpm,
     RAW: score.raw,
   }));
+}
+
+export function parseConvexError(error: any) {
+  return error instanceof ConvexError
+    ? (error.data as string)
+    : 'Unexpected error occurred';
 }

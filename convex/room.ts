@@ -1,7 +1,10 @@
-import { v } from 'convex/values';
+import { ConvexError, v } from 'convex/values';
 import { query, mutation } from './_generated/server';
 import { nanoid } from 'nanoid';
 import type { User } from '../stores/userStore';
+
+const MAXIUUM_MEMBERS = 4;
+
 export const create = mutation({
   args: {
     roomId: v.string(),
@@ -40,7 +43,11 @@ export const join = mutation({
       .unique();
 
     if (!room) {
-      throw new Error('Room not found');
+      throw new ConvexError('Room not found');
+    }
+
+    if (room.members.length >= MAXIUUM_MEMBERS) {
+      throw new ConvexError('Room is full');
     }
 
     room.members.push(newMember);
@@ -63,7 +70,7 @@ export const leaveRoom = mutation({
       .unique();
 
     if (!room) {
-      throw new Error('Room not found');
+      throw new ConvexError('Room not found');
     }
 
     room.members = room.members.filter(
@@ -89,13 +96,13 @@ export const updateMemberProgress = mutation({
       .unique();
 
     if (!room) {
-      throw new Error('Room not found');
+      throw new ConvexError('Room not found');
     }
 
     const member = room.members.find((member) => member.userId === args.userId);
 
     if (!member) {
-      throw new Error('User not in room');
+      throw new ConvexError('User not in room');
     }
 
     member.progress = args.progress;
@@ -117,7 +124,7 @@ export const getMembers = query({
       .unique();
 
     if (!room) {
-      throw new Error('Room not found');
+      throw new ConvexError('Room not found');
     }
 
     return room.members;
