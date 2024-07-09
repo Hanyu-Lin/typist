@@ -54,7 +54,7 @@ export const join = mutation({
 
     await ctx.db.patch(room._id, { members: room.members });
 
-    return room;
+    return newMember;
   },
 });
 

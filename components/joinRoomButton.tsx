@@ -26,8 +26,8 @@ import { useMutation } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { ConvexError } from 'convex/values';
 import { parseConvexError } from '@/lib/utils';
+import { useUserStore } from '@/stores/userStore';
 
 type JoinRoomForm = z.infer<typeof joinRoomSchema>;
 
@@ -35,6 +35,7 @@ export default function JoinRoomButtoon() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const joinRoom = useMutation(api.room.join);
+  const userStore = useUserStore();
 
   const form = useForm<JoinRoomForm>({
     resolver: zodResolver(joinRoomSchema),
@@ -47,7 +48,8 @@ export default function JoinRoomButtoon() {
   async function onSubmit({ roomId, username }: JoinRoomForm) {
     setIsLoading(true);
     try {
-      await joinRoom({ roomId, username });
+      const newMember = await joinRoom({ roomId, username });
+      userStore.setUser(newMember);
       router.push(`/room/${roomId}`);
     } catch (error) {
       toast.error(parseConvexError(error));
