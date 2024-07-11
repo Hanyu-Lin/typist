@@ -112,6 +112,23 @@ export const updateMemberProgress = mutation({
     return room;
   },
 });
+export const getOwner = query({
+  args: {
+    roomId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query('room')
+      .withIndex('by_roomId', (q) => q.eq('roomId', args.roomId))
+      .unique();
+
+    if (!room) {
+      throw new ConvexError('Room not found');
+    }
+
+    return room.ownerId;
+  },
+});
 
 export const getMembers = query({
   args: {
@@ -128,5 +145,122 @@ export const getMembers = query({
     }
 
     return room.members;
+  },
+});
+export const startInitialCountDown = mutation({
+  args: {
+    roomId: v.string(),
+    userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query('room')
+      .withIndex('by_roomId', (q) => q.eq('roomId', args.roomId))
+      .unique();
+
+    if (!room) {
+      throw new ConvexError('Room not found');
+    }
+
+    if (room.ownerId !== args.userId) {
+      throw new ConvexError('Only the owner can start the initial countdown');
+    }
+
+    if (room.initialCountDownRunning) {
+      throw new ConvexError('Initial countdown already running');
+    }
+
+    const initialCountDownEndTime = Date.now() + 5 * 1000; // 5 seconds from now
+
+    await ctx.db.patch(room._id, {
+      initialCountDownEndTime,
+      initialCountDownRunning: true,
+    });
+
+    return { initialCountDownEndTime, initialCountDownRunning: true };
+  },
+});
+
+export const startTimer = mutation({
+  args: {
+    roomId: v.string(),
+    userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query('room')
+      .withIndex('by_roomId', (q) => q.eq('roomId', args.roomId))
+      .unique();
+
+    if (!room) {
+      throw new ConvexError('Room not found');
+    }
+
+    if (room.ownerId !== args.userId) {
+      throw new ConvexError('Only the owner can start the timer');
+    }
+
+    if (room.timerRunning) {
+      throw new ConvexError('Timer already running');
+    }
+
+    const endTime = Date.now() + 2 * 60 * 1000; // 2 minutes from now
+
+    await ctx.db.patch(room._id, {
+      endTime,
+      timerRunning: true,
+      initialCountDownEndTime: undefined,
+      initialCountDownRunning: false,
+    });
+
+    return { endTime, timerRunning: true };
+  },
+});
+
+export const resetTimer = mutation({
+  args: {
+    roomId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query('room')
+      .withIndex('by_roomId', (q) => q.eq('roomId', args.roomId))
+      .unique();
+
+    if (!room) {
+      throw new ConvexError('Room not found');
+    }
+
+    await ctx.db.patch(room._id, {
+      endTime: undefined,
+      timerRunning: false,
+      initialCountDownEndTime: undefined,
+      initialCountDownRunning: false,
+    });
+
+    return { endTime: null };
+  },
+});
+
+export const getTimer = query({
+  args: {
+    roomId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query('room')
+      .withIndex('by_roomId', (q) => q.eq('roomId', args.roomId))
+      .unique();
+
+    if (!room) {
+      throw new ConvexError('Room not found');
+    }
+
+    return {
+      endTime: room.endTime,
+      timerRunning: room.timerRunning,
+      initialCountDownEndTime: room.initialCountDownEndTime,
+      initialCountDownRunning: room.initialCountDownRunning,
+    };
   },
 });

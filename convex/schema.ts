@@ -29,5 +29,9 @@ export default defineSchema({
         progress: v.number(),
       }),
     ),
+    initialCountDownEndTime: v.optional(v.number()), // timestamp when the initial count down ends
+    initialCountDownRunning: v.optional(v.boolean()),
+    endTime: v.optional(v.number()), // timestamp when the timer ends
+    timerRunning: v.optional(v.boolean()),
   }).index('by_roomId', ['roomId']),
 });

@@ -1,5 +1,7 @@
 'use client';
+import MemberProgress from '@/app/room/[roomId]/_components/memberProgress';
 import JoinRoomButton from '@/components/joinRoomButton';
+import MultiTypingTest from '@/components/mutiplePlayerTyping';
 import {
   Card,
   CardContent,
@@ -9,6 +11,7 @@ import {
 } from '@/components/ui/card';
 import { api } from '@/convex/_generated/api';
 import { Id } from '@/convex/_generated/dataModel';
+import { cn } from '@/lib/utils';
 import { useUserStore } from '@/stores/userStore';
 import { useQuery } from 'convex/react';
 import { Loader2 } from 'lucide-react';
@@ -29,6 +32,7 @@ export default function RoomPage({ params }: RoomPageProps) {
   const isMember = roomMembers?.some(
     (member) => member.userId === currentUser?.userId,
   );
+  const membersCount = roomMembers?.length ?? 0;
   const previousMembersRef = useRef(roomMembers);
 
   if (loading && roomMembers) {
@@ -50,19 +54,25 @@ export default function RoomPage({ params }: RoomPageProps) {
   previousMembersRef.current = roomMembers;
 
   if (loading) {
-    return <Loader2 />;
+    return <Loader2 className="h-4 w-4 animate-spin" />;
   }
 
   return (
     <>
       {isMember ? (
-        <div>
-          <ul>
+        <>
+          <div
+            className={cn(
+              'grid gap-4 ',
+              membersCount > 2 ? 'grid-cols-2' : 'grid-cols-1 ',
+            )}
+          >
             {roomMembers?.map((member) => (
-              <li key={member.userId}>{member.username}</li>
+              <MemberProgress key={member.userId} member={member} />
             ))}
-          </ul>
-        </div>
+          </div>
+          <MultiTypingTest roomId={params.roomId} />
+        </>
       ) : (
         <Card className="w-[90vw] max-w-[400px]">
           <CardHeader>
