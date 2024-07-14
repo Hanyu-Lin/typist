@@ -1,7 +1,7 @@
 'use client';
 import MemberProgress from '@/app/room/[roomId]/_components/memberProgress';
 import JoinRoomButton from '@/components/joinRoomButton';
-import MultiTypingTest from '@/components/mutiplePlayerTyping';
+import MultiTypingTest from '@/app/room/[roomId]/_components/multiPlayerTyping';
 import {
   Card,
   CardContent,

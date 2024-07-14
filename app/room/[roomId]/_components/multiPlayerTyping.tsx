@@ -4,12 +4,12 @@ import Countdown from '@/components/countdown';
 import { cn, parseConvexError, validCharacters } from '@/lib/utils';
 import { useTypingStore } from '@/stores/typingStore';
 import { useRef, useEffect, useState, useCallback } from 'react';
-import RestartButton from '@/components/restartButton';
 import { useConvex, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { Button } from '@/components/ui/button';
 import { useUserStore } from '@/stores/userStore';
 import { toast } from 'sonner';
+import CountdownSeparator from '@/app/room/[roomId]/_components/countDownSeperator';
 
 interface MultiTypingTestProps {
   roomId: string;
@@ -46,6 +46,7 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
       setTimeLeft(0);
       setInitialCountDown(5);
       setIsInitialCountDownRunning(false);
+      timerStartedRef.current = false;
     } catch (error) {
       toast.error(`Failed to reset timer: ${parseConvexError(error)}`);
     }
@@ -169,8 +170,15 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
   return (
     <>
       <div className="flex flex-col items-center w-3/4 gap-3">
-        {isInitialCountDownRunning && <Countdown timer={initialCountDown} />}
-        {!isInitialCountDownRunning && <Countdown timer={timeLeft} />}
+        <CountdownSeparator
+          isInitialCountDownRunning={isInitialCountDownRunning}
+          initialCountDown={initialCountDown}
+          timeLeft={timeLeft}
+          timerStartedRef={timerStartedRef}
+          startInitialCountDown={startInitialCountDown}
+          resetTimer={resetTimer}
+          isOwner={isOwner}
+        />
         <div className="relative rounded-lg font-mono text-2xl w-full">
           <div
             ref={inputRef}
@@ -198,8 +206,6 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
             </div>
           </div>
         </div>
-        <Button onClick={startInitialCountDown}>Start race</Button>
-        <Button onClick={resetTimer}>Reset Race</Button>
       </div>
     </>
   );
