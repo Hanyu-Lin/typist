@@ -1,12 +1,10 @@
 'use client';
 import Word from '@/components/word';
-import Countdown from '@/components/countdown';
 import { cn, parseConvexError, validCharacters } from '@/lib/utils';
 import { useTypingStore } from '@/stores/typingStore';
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { useConvex, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-import { Button } from '@/components/ui/button';
 import { useUserStore } from '@/stores/userStore';
 import { toast } from 'sonner';
 import CountdownSeparator from '@/app/room/[roomId]/_components/countDownSeperator';
