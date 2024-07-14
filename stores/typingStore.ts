@@ -62,7 +62,7 @@ export const useTypingStore = create<TypingState>((set) => ({
   resetTypingState: () =>
     set({
       currWordIndex: 0,
-      wordList: generateWords(100),
+      wordList: generateWords(250),
       typedWord: '',
       typedHistory: [],
     }),
