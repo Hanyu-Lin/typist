@@ -2,15 +2,12 @@
 import Word from '@/components/word';
 import Countdown from '@/components/countdown';
 import { cn, parseConvexError, validCharacters } from '@/lib/utils';
-
 import { useTypingStore } from '@/stores/typingStore';
 import { useRef, useEffect, useState, useCallback } from 'react';
 import RestartButton from '@/components/restartButton';
 import { useConvex, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
-
 import { Button } from '@/components/ui/button';
-
 import { useUserStore } from '@/stores/userStore';
 import { toast } from 'sonner';
 
@@ -39,6 +36,8 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
   const isOwner = ownerId === user?.userId;
   const roomTimer = useQuery(api.room.getTimer, { roomId });
 
+  const timerStartedRef = useRef(false);
+
   const resetTimer = async () => {
     try {
       await convex.mutation(api.room.resetTimer, {
@@ -65,7 +64,8 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
   };
 
   const startMainTimer = useCallback(async () => {
-    if (!user || !isOwner) return;
+    if (!user || !isOwner || timerStartedRef.current) return;
+    timerStartedRef.current = true;
     try {
       await convex.mutation(api.room.startTimer, {
         roomId,
