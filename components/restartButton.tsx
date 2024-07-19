@@ -15,7 +15,7 @@ const RestartButton = forwardRef<HTMLButtonElement, RestartButtonProps>(
     const { resetTypingState } = useTypingStore();
 
     const handleRestart = () => {
-      resetTypingState();
+      resetTypingState(true);
       resetTimeState();
       focusInput();
     };

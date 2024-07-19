@@ -1,6 +1,11 @@
 'use client';
 import Word from '@/components/word';
-import { cn, parseConvexError, validCharacters } from '@/lib/utils';
+import {
+  cn,
+  generateWords,
+  parseConvexError,
+  validCharacters,
+} from '@/lib/utils';
 import { useTypingStore } from '@/stores/typingStore';
 import { useRef, useEffect, useState, useCallback } from 'react';
 import { useConvex, useQuery } from 'convex/react';
@@ -17,12 +22,15 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
   const {
     currWordIndex,
     typedWord,
-    wordList,
     moveToNextWord,
+    wordList,
+    setWordList,
     setTypedWord,
     handleDelete,
     resetTypingState,
   } = useTypingStore();
+
+  const convexWordList = useQuery(api.room.getWordList, { roomId });
 
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [initialCountDown, setInitialCountDown] = useState(5);
@@ -44,6 +52,7 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
       setTimeLeft(0);
       setInitialCountDown(5);
       setIsInitialCountDownRunning(false);
+      resetTypingState(false);
       timerStartedRef.current = false;
     } catch (error) {
       toast.error(`Failed to reset timer: ${parseConvexError(error)}`);
@@ -56,6 +65,10 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
       await convex.mutation(api.room.startInitialCountDown, {
         roomId,
         userId: user.userId,
+      });
+      await convex.mutation(api.room.setWordList, {
+        roomId,
+        wordList: generateWords(250),
       });
     } catch (error) {
       toast.error(parseConvexError(error));
@@ -74,6 +87,18 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
       toast.error(parseConvexError(error));
     }
   }, [roomId, user, isOwner, convex]);
+
+  useEffect(() => {
+    if (initialCountDown === 0 && isInitialCountDownRunning) {
+      setWordList(convexWordList ?? []);
+    }
+  }, [
+    initialCountDown,
+    isInitialCountDownRunning,
+    convexWordList,
+    setWordList,
+    wordList,
+  ]);
 
   useEffect(() => {
     if (roomTimer?.initialCountDownEndTime) {
@@ -97,7 +122,6 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
       }
     } else {
       setInitialCountDown(5);
-      resetTypingState();
       setIsInitialCountDownRunning(false);
     }
 
@@ -120,7 +144,7 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
     } else {
       setTimeLeft(0);
     }
-  }, [roomTimer, startMainTimer, resetTypingState]);
+  }, [roomTimer, startMainTimer]);
 
   const inputRef = useRef<HTMLDivElement>(null);
   const restartButtonRef = useRef<HTMLButtonElement>(null);
@@ -141,7 +165,7 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
     e.preventDefault();
     if (!timeLeft) {
       if (key === 'Tab') {
-        resetTypingState();
+        resetTypingState(false);
       }
       return;
     }
@@ -190,7 +214,7 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
             )}
           >
             <div className="flex justify-start flex-wrap h-32 overflow-hidden items-center select-none px-3">
-              {wordList.map((word, index) => (
+              {convexWordList?.map((word, index) => (
                 <Word
                   key={`${word}-${index}`}
                   index={index}

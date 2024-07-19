@@ -20,6 +20,7 @@ export default defineSchema({
     highestAccuracy: v.number(),
   }).index('by_userId', ['userId']),
   room: defineTable({
+    wordList: v.array(v.string()),
     roomId: v.string(),
     ownerId: v.string(),
     members: v.array(

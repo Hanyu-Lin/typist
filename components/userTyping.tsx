@@ -1,7 +1,7 @@
 'use client';
 import Word from '@/components/word';
 import Countdown from '@/components/countdown';
-import { cn, validCharacters } from '@/lib/utils';
+import { cn, generateWords, validCharacters } from '@/lib/utils';
 import { useTimerStore } from '@/stores/timerStore';
 import { useTypingStore } from '@/stores/typingStore';
 import { MousePointer2 } from 'lucide-react';
@@ -19,6 +19,7 @@ export default function TypingTest() {
     currWordIndex,
     typedWord,
     wordList,
+    setWordList,
     typedHistory,
     setInputRef,
     moveToNextWord,
@@ -39,10 +40,11 @@ export default function TypingTest() {
     const storageTime = getLocalStorage('timer', 60);
     setTimer(storageTime);
     setLocalStorage('timer', storageTime);
+    setWordList(generateWords(250));
 
     inputRef.current?.focus();
     setInputRef(inputRef);
-  }, [setInputRef, setTimer]);
+  }, [setInputRef, setTimer, setWordList]);
 
   // Submit test results to the database when the test is completed
   useEffect(() => {
@@ -78,7 +80,7 @@ export default function TypingTest() {
     e.preventDefault();
     if (!timer) {
       if (key === 'Tab') {
-        resetTypingState();
+        resetTypingState(true);
       }
       return;
     }

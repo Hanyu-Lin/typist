@@ -2,6 +2,7 @@ import { ConvexError, v } from 'convex/values';
 import { query, mutation } from './_generated/server';
 import { nanoid } from 'nanoid';
 import type { User } from '../stores/userStore';
+import { faker } from '@faker-js/faker';
 
 const MAXIUUM_MEMBERS = 4;
 
@@ -19,6 +20,7 @@ export const create = mutation({
       roomId: args.roomId,
       ownerId: args.owner.userId,
       members: [args.owner],
+      wordList: [],
     });
 
     return newRoom;
@@ -262,5 +264,44 @@ export const getTimer = query({
       initialCountDownEndTime: room.initialCountDownEndTime,
       initialCountDownRunning: room.initialCountDownRunning,
     };
+  },
+});
+
+export const setWordList = mutation({
+  args: {
+    roomId: v.string(),
+    wordList: v.array(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query('room')
+      .withIndex('by_roomId', (q) => q.eq('roomId', args.roomId))
+      .unique();
+
+    if (!room) {
+      throw new ConvexError('Room not found');
+    }
+
+    await ctx.db.patch(room._id, { wordList: args.wordList });
+
+    return room;
+  },
+});
+
+export const getWordList = query({
+  args: {
+    roomId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query('room')
+      .withIndex('by_roomId', (q) => q.eq('roomId', args.roomId))
+      .unique();
+
+    if (!room) {
+      throw new ConvexError('Room not found');
+    }
+
+    return room.wordList;
   },
 });
