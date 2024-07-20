@@ -13,7 +13,7 @@ export default function MemberProgress({ member }: MemberProgressProps) {
       <Avatar className="h-14 w-14">
         <AvatarFallback>{member.username}</AvatarFallback>
       </Avatar>
-      <Progress className="w-48 h-3" value={10} />
+      <Progress className="w-48 h-3" value={member.progress} />
     </Card>
   );
 }

@@ -2,7 +2,7 @@ import { ConvexError, v } from 'convex/values';
 import { query, mutation } from './_generated/server';
 import { nanoid } from 'nanoid';
 import type { User } from '../stores/userStore';
-import { faker } from '@faker-js/faker';
+import { faker, ro } from '@faker-js/faker';
 
 const MAXIUUM_MEMBERS = 4;
 
@@ -219,9 +219,10 @@ export const startTimer = mutation({
   },
 });
 
-export const resetTimer = mutation({
+export const resetRoom = mutation({
   args: {
     roomId: v.string(),
+    userId: v.string(),
   },
   handler: async (ctx, args) => {
     const room = await ctx.db
@@ -231,6 +232,43 @@ export const resetTimer = mutation({
 
     if (!room) {
       throw new ConvexError('Room not found');
+    }
+
+    if (room.ownerId !== args.userId) {
+      throw new ConvexError('Only the owner can reset the room');
+    }
+    // Reset members progress
+    room.members = room.members.map((member) => ({
+      ...member,
+      progress: 0,
+    }));
+
+    await ctx.db.patch(room._id, {
+      wordList: [],
+      members: room.members,
+    });
+
+    return room;
+  },
+});
+
+export const resetTimer = mutation({
+  args: {
+    roomId: v.string(),
+    userId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query('room')
+      .withIndex('by_roomId', (q) => q.eq('roomId', args.roomId))
+      .unique();
+
+    if (!room) {
+      throw new ConvexError('Room not found');
+    }
+
+    if (room.ownerId !== args.userId) {
+      throw new ConvexError('Only the owner can reset the timer');
     }
 
     await ctx.db.patch(room._id, {

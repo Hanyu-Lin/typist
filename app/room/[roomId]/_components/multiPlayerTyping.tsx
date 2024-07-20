@@ -1,6 +1,7 @@
 'use client';
 import Word from '@/components/word';
 import {
+  calculateCompletionPercentage,
   cn,
   generateWords,
   parseConvexError,
@@ -22,8 +23,10 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
   const {
     currWordIndex,
     typedWord,
+    typedHistory,
     moveToNextWord,
     wordList,
+    setStrictMode,
     setWordList,
     setTypedWord,
     handleDelete,
@@ -46,8 +49,14 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
 
   const resetTimer = async () => {
     try {
+      if (!isOwner) return;
       await convex.mutation(api.room.resetTimer, {
         roomId,
+        userId: user?.userId ?? '',
+      });
+      await convex.mutation(api.room.resetRoom, {
+        roomId,
+        userId: user?.userId ?? '',
       });
       setTimeLeft(0);
       setInitialCountDown(5);
@@ -68,7 +77,7 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
       });
       await convex.mutation(api.room.setWordList, {
         roomId,
-        wordList: generateWords(250),
+        wordList: generateWords(75),
       });
     } catch (error) {
       toast.error(parseConvexError(error));
@@ -90,6 +99,7 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
 
   useEffect(() => {
     if (initialCountDown === 0 && isInitialCountDownRunning) {
+      setStrictMode(true);
       setWordList(convexWordList ?? []);
     }
   }, [
@@ -98,6 +108,7 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
     convexWordList,
     setWordList,
     wordList,
+    setStrictMode,
   ]);
 
   useEffect(() => {
@@ -174,6 +185,16 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
       handleDelete(!!metaKey);
     } else if (key === ' ') {
       if (typedWord === '') return;
+      const completionPrecentage = calculateCompletionPercentage(
+        typedHistory,
+        wordList,
+      );
+      if (!user?.userId) return;
+      convex.mutation(api.room.updateMemberProgress, {
+        userId: user?.userId,
+        roomId,
+        progress: completionPrecentage,
+      });
       moveToNextWord();
     } else if (key == 'Tab') {
       restartButtonRef.current?.focus();

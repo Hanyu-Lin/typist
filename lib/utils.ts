@@ -108,6 +108,18 @@ function calculateAccuracy(
   return withDecimalPoints ? accuracy : Math.round(accuracy);
 }
 
+export const calculateCompletionPercentage = (
+  typedHistory: string[],
+  wordList: string[],
+): number => {
+  const totalWords = wordList.length;
+  const correctWords = typedHistory.filter(
+    (typedWord, index) => typedWord === wordList[index],
+  ).length;
+
+  return (correctWords / totalWords) * 100;
+};
+
 // Regex to match valid characters for typing test
 // Only alphanumeric characters, hyphen, period, comma, single quote, and space are allowed
 export const validCharacters = /^[a-zA-Z0-9\-.,' ]$/;

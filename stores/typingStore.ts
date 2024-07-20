@@ -7,6 +7,8 @@ interface TypingState {
   wordList: string[];
   typedHistory: string[];
   inputRef: React.RefObject<HTMLDivElement> | null;
+  strictMode: boolean;
+  setStrictMode: (strictMode: boolean) => void;
   setWordList: (wordList: string[]) => void;
   setInputRef: (inputRef: React.RefObject<HTMLDivElement>) => void;
   setTypedWord: (typedWord: string) => void;
@@ -22,16 +24,26 @@ export const useTypingStore = create<TypingState>((set) => ({
   wordList: [],
   typedHistory: [],
   inputRef: null,
+  strictMode: false,
   setWordList: (wordList) => set({ wordList }),
+  setStrictMode: (strictMode) => set({ strictMode }),
   setInputRef: (inputRef) => set({ inputRef }),
   setTypedWord: (typedWord) => set({ typedWord }),
   resetTypedWord: () => set({ typedWord: '' }),
   moveToNextWord: () =>
-    set((state) => ({
-      typedWord: '',
-      currWordIndex: state.currWordIndex + 1,
-      typedHistory: [...state.typedHistory, state.typedWord],
-    })),
+    set((state) => {
+      if (
+        state.strictMode &&
+        state.typedWord !== state.wordList[state.currWordIndex]
+      ) {
+        return {};
+      }
+      return {
+        typedWord: '',
+        currWordIndex: state.currWordIndex + 1,
+        typedHistory: [...state.typedHistory, state.typedWord],
+      };
+    }),
   handleDelete: (isMetaKey: boolean) =>
     set((state) => {
       if (state.currWordIndex === 0 && state.typedWord === '') return {}; // No action if it's the first word and nothing is typed
