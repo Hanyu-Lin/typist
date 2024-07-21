@@ -215,8 +215,7 @@ export const startTimer = mutation({
       throw new ConvexError('Timer already running');
     }
 
-    // const endTime = Date.now() + 2 * 60 * 1000; // 2 minutes from now
-    const endTime = Date.now() + 10 * 1000; // 2 minutes from now
+    const endTime = Date.now() + 60 * 1000; // 1 minutes from now
     await ctx.db.patch(room._id, {
       endTime,
       timerRunning: true,

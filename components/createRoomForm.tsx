@@ -41,8 +41,7 @@ export default function CreateRoomForm({ roomId }: CreateRoomFormProps) {
 
   async function onSubmit({ username }: CreatRoomForm) {
     setIsLoading(true);
-    const currentUser = userStore.user;
-    const owner: User = currentUser ?? userStore.createUser(username);
+    const owner: User = userStore.createUser(username);
     try {
       await roomMutate({ roomId, owner });
       setUser(owner);

@@ -8,14 +8,13 @@ import {
   validCharacters,
 } from '@/lib/utils';
 import { useTypingStore } from '@/stores/typingStore';
-import { useRef, useEffect, useState, useCallback, use } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { useConvex, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useUserStore } from '@/stores/userStore';
 import { toast } from 'sonner';
 import CountdownSeparator from '@/app/room/[roomId]/_components/countDownSeperator';
 import confetti from 'canvas-confetti';
-import { calcWinnerWhenTimerEnds } from '@/convex/room';
 
 interface MultiTypingTestProps {
   roomId: string;
@@ -113,12 +112,12 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
 
   const calculateWinner = useCallback(() => {
     try {
-      if (winner && timerStartedRef.current) return;
+      if (winner && timeLeft != 0 && timerStartedRef.current) return;
       convex.mutation(api.room.calcWinnerWhenTimerEnds, { roomId });
     } catch (error) {
       toast.error(parseConvexError(error));
     }
-  }, [convex, roomId, winner]);
+  }, [convex, roomId, winner, timeLeft]);
 
   const startInitialCountDown = async () => {
     if (!user) return;
@@ -129,7 +128,7 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
       });
       await convex.mutation(api.room.setWordList, {
         roomId,
-        wordList: generateWords(10),
+        wordList: generateWords(50),
       });
     } catch (error) {
       toast.error(parseConvexError(error));
