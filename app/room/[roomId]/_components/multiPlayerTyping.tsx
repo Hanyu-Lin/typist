@@ -8,12 +8,14 @@ import {
   validCharacters,
 } from '@/lib/utils';
 import { useTypingStore } from '@/stores/typingStore';
-import { useRef, useEffect, useState, useCallback } from 'react';
+import { useRef, useEffect, useState, useCallback, use } from 'react';
 import { useConvex, useQuery } from 'convex/react';
 import { api } from '@/convex/_generated/api';
 import { useUserStore } from '@/stores/userStore';
 import { toast } from 'sonner';
 import CountdownSeparator from '@/app/room/[roomId]/_components/countDownSeperator';
+import confetti from 'canvas-confetti';
+import { calcWinnerWhenTimerEnds } from '@/convex/room';
 
 interface MultiTypingTestProps {
   roomId: string;
@@ -44,10 +46,11 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
   const ownerId = useQuery(api.room.getOwner, { roomId });
   const isOwner = ownerId === user?.userId;
   const roomTimer = useQuery(api.room.getTimer, { roomId });
+  const winner = useQuery(api.room.getWinner, { roomId });
 
   const timerStartedRef = useRef(false);
 
-  const resetTimer = async () => {
+  const resetTimer = useCallback(async () => {
     try {
       if (!isOwner) return;
       await convex.mutation(api.room.resetTimer, {
@@ -66,7 +69,56 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
     } catch (error) {
       toast.error(`Failed to reset timer: ${parseConvexError(error)}`);
     }
-  };
+  }, [roomId, user, isOwner, convex, resetTypingState]);
+
+  const showConfetti = useCallback(() => {
+    const duration = 5 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+    const randomInRange = (min: number, max: number) =>
+      Math.random() * (max - min) + min;
+
+    const interval = window.setInterval(() => {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      const particleCount = 50 * (timeLeft / duration);
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+      });
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+      });
+    }, 250);
+  }, []);
+
+  useEffect(() => {
+    if (!winner) return;
+    if (winner == user?.userId) {
+      toast.success(`Winner is ${winner}`);
+      showConfetti();
+    } else {
+      toast.error(`Winner is ${winner}`);
+    }
+    resetTimer();
+  }, [winner, user, resetTimer, showConfetti]);
+
+  const calculateWinner = useCallback(() => {
+    try {
+      if (winner && timerStartedRef.current) return;
+      convex.mutation(api.room.calcWinnerWhenTimerEnds, { roomId });
+    } catch (error) {
+      toast.error(parseConvexError(error));
+    }
+  }, [convex, roomId, winner]);
 
   const startInitialCountDown = async () => {
     if (!user) return;
@@ -77,7 +129,7 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
       });
       await convex.mutation(api.room.setWordList, {
         roomId,
-        wordList: generateWords(75),
+        wordList: generateWords(10),
       });
     } catch (error) {
       toast.error(parseConvexError(error));
@@ -146,6 +198,8 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
           setTimeLeft((prevTime) => {
             if (prevTime <= 0) {
               clearInterval(mainTimerId);
+              calculateWinner();
+              resetTimer();
               return 0;
             }
             return prevTime - 1;
@@ -155,7 +209,7 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
     } else {
       setTimeLeft(0);
     }
-  }, [roomTimer, startMainTimer]);
+  }, [roomTimer, startMainTimer, calculateWinner, resetTimer]);
 
   const inputRef = useRef<HTMLDivElement>(null);
   const restartButtonRef = useRef<HTMLButtonElement>(null);
@@ -174,6 +228,7 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
   const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
     const { key, metaKey } = e;
     e.preventDefault();
+    e.stopPropagation();
     if (!timeLeft) {
       if (key === 'Tab') {
         resetTypingState(false);
@@ -185,8 +240,10 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
       handleDelete(!!metaKey);
     } else if (key === ' ') {
       if (typedWord === '') return;
+      moveToNextWord();
+      const updatedTypedHistory = useTypingStore.getState().typedHistory;
       const completionPrecentage = calculateCompletionPercentage(
-        typedHistory,
+        updatedTypedHistory,
         wordList,
       );
       if (!user?.userId) return;
@@ -195,7 +252,6 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
         roomId,
         progress: completionPrecentage,
       });
-      moveToNextWord();
     } else if (key == 'Tab') {
       restartButtonRef.current?.focus();
     } else if (e.key.length === 1 && validCharacters.test(e.key)) {

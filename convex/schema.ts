@@ -34,5 +34,6 @@ export default defineSchema({
     initialCountDownRunning: v.optional(v.boolean()),
     endTime: v.optional(v.number()), // timestamp when the timer ends
     timerRunning: v.optional(v.boolean()),
+    winner: v.optional(v.string()),
   }).index('by_roomId', ['roomId']),
 });

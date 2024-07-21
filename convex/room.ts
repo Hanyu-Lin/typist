@@ -101,6 +101,10 @@ export const updateMemberProgress = mutation({
       throw new ConvexError('Room not found');
     }
 
+    if (args.progress < 0 || args.progress > 100) {
+      throw new ConvexError('Invalid progress value');
+    }
+
     const member = room.members.find((member) => member.userId === args.userId);
 
     if (!member) {
@@ -111,6 +115,11 @@ export const updateMemberProgress = mutation({
 
     await ctx.db.patch(room._id, { members: room.members });
 
+    if (args.progress == 100) {
+      await ctx.db.patch(room._id, {
+        winner: args.userId,
+      });
+    }
     return room;
   },
 });
@@ -206,8 +215,8 @@ export const startTimer = mutation({
       throw new ConvexError('Timer already running');
     }
 
-    const endTime = Date.now() + 2 * 60 * 1000; // 2 minutes from now
-
+    // const endTime = Date.now() + 2 * 60 * 1000; // 2 minutes from now
+    const endTime = Date.now() + 10 * 1000; // 2 minutes from now
     await ctx.db.patch(room._id, {
       endTime,
       timerRunning: true,
@@ -216,6 +225,54 @@ export const startTimer = mutation({
     });
 
     return { endTime, timerRunning: true };
+  },
+});
+// set the highest member progress as the winner when the timer ends
+export const calcWinnerWhenTimerEnds = mutation({
+  args: {
+    roomId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query('room')
+      .withIndex('by_roomId', (q) => q.eq('roomId', args.roomId))
+      .unique();
+
+    if (!room) {
+      throw new ConvexError('Room not found');
+    }
+
+    if (room.timerRunning) {
+      throw new ConvexError('Timer is still running');
+    }
+
+    const winner = room.members.reduce((winner, member) =>
+      member.progress > winner.progress ? member : winner,
+    );
+
+    await ctx.db.patch(room._id, {
+      winner: winner.userId,
+    });
+
+    return winner.userId;
+  },
+});
+
+export const getWinner = query({
+  args: {
+    roomId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query('room')
+      .withIndex('by_roomId', (q) => q.eq('roomId', args.roomId))
+      .unique();
+
+    if (!room) {
+      throw new ConvexError('Room not found');
+    }
+
+    return room.winner;
   },
 });
 
@@ -246,6 +303,7 @@ export const resetRoom = mutation({
     await ctx.db.patch(room._id, {
       wordList: [],
       members: room.members,
+      winner: undefined,
     });
 
     return room;

@@ -16,7 +16,7 @@ const TimerToolbar = () => {
   const handleSelectTime = (value: number) => {
     if (inputRef?.current) inputRef.current.focus();
     setTimer(value);
-    resetTypingState();
+    resetTypingState(true);
     setLocalStorage('timer', value);
   };
 
