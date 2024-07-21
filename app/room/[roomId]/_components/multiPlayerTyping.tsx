@@ -110,14 +110,15 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
     resetTimer();
   }, [winner, user, resetTimer, showConfetti]);
 
-  const calculateWinner = useCallback(() => {
-    try {
-      if (winner && timerStartedRef.current) return;
-      convex.mutation(api.room.calcWinnerWhenTimerEnds, { roomId });
-    } catch (error) {
-      toast.error(parseConvexError(error));
-    }
-  }, [convex, roomId, winner]);
+  //TODO: fix this calculateWinner() function call so it works properly with the useEffect hook for displaying the winner
+  // const calculateWinner = useCallback(() => {
+  //   try {
+  //     if (winner && timerStartedRef.current) return;
+  //     convex.mutation(api.room.calcWinnerWhenTimerEnds, { roomId });
+  //   } catch (error) {
+  //     toast.error(parseConvexError(error));
+  //   }
+  // }, [convex, roomId, winner]);
 
   const startInitialCountDown = async () => {
     if (!user) return;
@@ -126,10 +127,10 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
         roomId,
         userId: user.userId,
       });
-      setWordListLength(50);
+      setWordListLength(30);
       await convex.mutation(api.room.setWordList, {
         roomId,
-        wordList: generateWords(50),
+        wordList: generateWords(30),
       });
     } catch (error) {
       toast.error(parseConvexError(error));
@@ -198,7 +199,7 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
           setTimeLeft((prevTime) => {
             if (prevTime <= 0) {
               clearInterval(mainTimerId);
-              calculateWinner();
+              //calculateWinner();
               resetTimer();
               return 0;
             }
@@ -209,7 +210,7 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
     } else {
       setTimeLeft(0);
     }
-  }, [roomTimer, startMainTimer, calculateWinner, resetTimer]);
+  }, [roomTimer, startMainTimer, resetTimer]);
 
   const inputRef = useRef<HTMLDivElement>(null);
   const restartButtonRef = useRef<HTMLButtonElement>(null);
