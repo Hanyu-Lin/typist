@@ -117,7 +117,7 @@ export const updateMemberProgress = mutation({
 
     if (args.progress == 100) {
       await ctx.db.patch(room._id, {
-        winner: args.userId,
+        winner: { id: args.userId, name: member.username },
       });
     }
     return room;
@@ -245,15 +245,15 @@ export const calcWinnerWhenTimerEnds = mutation({
       throw new ConvexError('Timer is still running');
     }
 
-    const winner = room.members.reduce((winner, member) =>
+    const calcWinner = room.members.reduce((winner, member) =>
       member.progress > winner.progress ? member : winner,
     );
 
     await ctx.db.patch(room._id, {
-      winner: winner.userId,
+      winner: { id: calcWinner.userId, name: calcWinner.username },
     });
 
-    return winner.userId;
+    return calcWinner.userId;
   },
 });
 

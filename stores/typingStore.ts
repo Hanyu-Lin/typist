@@ -5,11 +5,13 @@ interface TypingState {
   currWordIndex: number;
   typedWord: string;
   wordList: string[];
+  wordListLength: number;
   typedHistory: string[];
   inputRef: React.RefObject<HTMLDivElement> | null;
   strictMode: boolean;
   setStrictMode: (strictMode: boolean) => void;
   setWordList: (wordList: string[]) => void;
+  setWordListLength: (wordListLength: number) => void;
   setInputRef: (inputRef: React.RefObject<HTMLDivElement>) => void;
   setTypedWord: (typedWord: string) => void;
   resetTypedWord: () => void;
@@ -22,10 +24,12 @@ export const useTypingStore = create<TypingState>((set) => ({
   currWordIndex: 0,
   typedWord: '',
   wordList: [],
+  wordListLength: 250,
   typedHistory: [],
   inputRef: null,
   strictMode: false,
   setWordList: (wordList) => set({ wordList }),
+  setWordListLength: (wordListLength) => set({ wordListLength }),
   setStrictMode: (strictMode) => set({ strictMode }),
   setInputRef: (inputRef) => set({ inputRef }),
   setTypedWord: (typedWord) => set({ typedWord }),
@@ -74,10 +78,10 @@ export const useTypingStore = create<TypingState>((set) => ({
       }
     }),
   resetTypingState: (generateNewWords) =>
-    set({
+    set((state) => ({
       currWordIndex: 0,
-      wordList: generateNewWords ? generateWords(250) : [],
+      wordList: generateNewWords ? generateWords(state.wordListLength) : [],
       typedWord: '',
       typedHistory: [],
-    }),
+    })),
 }));

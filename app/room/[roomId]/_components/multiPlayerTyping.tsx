@@ -24,9 +24,9 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
   const {
     currWordIndex,
     typedWord,
-    typedHistory,
     moveToNextWord,
     wordList,
+    setWordListLength,
     setStrictMode,
     setWordList,
     setTypedWord,
@@ -101,23 +101,23 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
 
   useEffect(() => {
     if (!winner) return;
-    if (winner == user?.userId) {
-      toast.success(`Winner is ${winner}`);
+    if (winner.id == user?.userId) {
+      toast.success(`Winner is ${winner.name}`);
       showConfetti();
     } else {
-      toast.error(`Winner is ${winner}`);
+      toast.error(`Winner is ${winner.name}`);
     }
     resetTimer();
   }, [winner, user, resetTimer, showConfetti]);
 
   const calculateWinner = useCallback(() => {
     try {
-      if (winner && timeLeft != 0 && timerStartedRef.current) return;
+      if (winner && timerStartedRef.current) return;
       convex.mutation(api.room.calcWinnerWhenTimerEnds, { roomId });
     } catch (error) {
       toast.error(parseConvexError(error));
     }
-  }, [convex, roomId, winner, timeLeft]);
+  }, [convex, roomId, winner]);
 
   const startInitialCountDown = async () => {
     if (!user) return;
@@ -126,6 +126,7 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
         roomId,
         userId: user.userId,
       });
+      setWordListLength(50);
       await convex.mutation(api.room.setWordList, {
         roomId,
         wordList: generateWords(50),
