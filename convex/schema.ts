@@ -40,5 +40,6 @@ export default defineSchema({
         name: v.string(),
       }),
     ),
+    resetNotification: v.boolean(),
   }).index('by_roomId', ['roomId']),
 });

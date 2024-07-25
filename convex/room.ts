@@ -1,8 +1,6 @@
 import { ConvexError, v } from 'convex/values';
 import { query, mutation } from './_generated/server';
 import { nanoid } from 'nanoid';
-import type { User } from '../stores/userStore';
-import { faker, ro } from '@faker-js/faker';
 
 const MAXIUUM_MEMBERS = 4;
 
@@ -21,6 +19,7 @@ export const create = mutation({
       ownerId: args.owner.userId,
       members: [args.owner],
       wordList: [],
+      resetNotification: false,
     });
 
     return newRoom;
@@ -241,9 +240,10 @@ export const calcWinnerWhenTimerEnds = mutation({
       throw new ConvexError('Room not found');
     }
 
-    if (room.timerRunning) {
-      throw new ConvexError('Timer is still running');
-    }
+    // Remove this check, as we want to calculate the winner when the timer ends
+    // if (room.timerRunning) {
+    //   throw new ConvexError('Timer is still running');
+    // }
 
     const calcWinner = room.members.reduce((winner, member) =>
       member.progress > winner.progress ? member : winner,
@@ -251,6 +251,7 @@ export const calcWinnerWhenTimerEnds = mutation({
 
     await ctx.db.patch(room._id, {
       winner: { id: calcWinner.userId, name: calcWinner.username },
+      timerRunning: false, // Set timerRunning to false when calculating the winner
     });
 
     return calcWinner.userId;
@@ -278,7 +279,6 @@ export const getWinner = query({
 export const resetRoom = mutation({
   args: {
     roomId: v.string(),
-    userId: v.string(),
   },
   handler: async (ctx, args) => {
     const room = await ctx.db
@@ -290,9 +290,6 @@ export const resetRoom = mutation({
       throw new ConvexError('Room not found');
     }
 
-    if (room.ownerId !== args.userId) {
-      throw new ConvexError('Only the owner can reset the room');
-    }
     // Reset members progress
     room.members = room.members.map((member) => ({
       ...member,
@@ -303,6 +300,7 @@ export const resetRoom = mutation({
       wordList: [],
       members: room.members,
       winner: undefined,
+      resetNotification: false,
     });
 
     return room;
@@ -312,7 +310,6 @@ export const resetRoom = mutation({
 export const resetTimer = mutation({
   args: {
     roomId: v.string(),
-    userId: v.string(),
   },
   handler: async (ctx, args) => {
     const room = await ctx.db
@@ -322,10 +319,6 @@ export const resetTimer = mutation({
 
     if (!room) {
       throw new ConvexError('Room not found');
-    }
-
-    if (room.ownerId !== args.userId) {
-      throw new ConvexError('Only the owner can reset the timer');
     }
 
     await ctx.db.patch(room._id, {
@@ -361,7 +354,6 @@ export const getTimer = query({
     };
   },
 });
-
 export const setWordList = mutation({
   args: {
     roomId: v.string(),
@@ -398,5 +390,43 @@ export const getWordList = query({
     }
 
     return room.wordList;
+  },
+});
+
+export const sendResetNotification = mutation({
+  args: {
+    roomId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query('room')
+      .withIndex('by_roomId', (q) => q.eq('roomId', args.roomId))
+      .unique();
+
+    if (!room) {
+      throw new ConvexError('Room not found');
+    }
+
+    await ctx.db.patch(room._id, { resetNotification: true });
+
+    return room;
+  },
+});
+
+export const getResetNotification = query({
+  args: {
+    roomId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const room = await ctx.db
+      .query('room')
+      .withIndex('by_roomId', (q) => q.eq('roomId', args.roomId))
+      .unique();
+
+    if (!room) {
+      throw new ConvexError('Room not found');
+    }
+
+    return room.resetNotification;
   },
 });
