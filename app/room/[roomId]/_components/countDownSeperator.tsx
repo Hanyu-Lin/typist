@@ -6,7 +6,6 @@ interface CountdownSeparatorProps {
   isInitialCountDownRunning: boolean;
   initialCountDown: number;
   timeLeft: number;
-  timerStartedRef: React.MutableRefObject<boolean>;
   startInitialCountDown: () => void;
   resetRace: () => void;
   isOwner: boolean;
@@ -16,7 +15,6 @@ const CountdownSeparator: React.FC<CountdownSeparatorProps> = ({
   isInitialCountDownRunning,
   initialCountDown,
   timeLeft,
-  timerStartedRef,
   startInitialCountDown,
   resetRace,
   isOwner = false,
@@ -29,7 +27,7 @@ const CountdownSeparator: React.FC<CountdownSeparatorProps> = ({
   const renderButtons = () => {
     if (!isOwner) return null;
 
-    return isInitialCountDownRunning || timerStartedRef.current ? (
+    return isInitialCountDownRunning || timeLeft ? (
       <Button variant="outline" onClick={resetRace}>
         Reset Race
       </Button>
