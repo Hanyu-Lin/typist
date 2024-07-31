@@ -4,11 +4,11 @@ import {
   CardHeader,
   CardContent,
   Card,
-} from "@/components/ui/card";
-import React from "react";
-import { CircleCheck, CircleX, Keyboard } from "lucide-react";
-import { Hint } from "@/components/hint";
-import { TypingSpeedMetrics } from "@/lib/utils";
+} from '@/components/ui/card';
+import React from 'react';
+import { CircleCheck, CircleX, Keyboard } from 'lucide-react';
+import { Hint } from '@/components/hint';
+import { TypingSpeedMetrics } from '@/lib/utils';
 
 const Results: React.FC<TypingSpeedMetrics> = ({
   wpm,

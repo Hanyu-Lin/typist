@@ -1,13 +1,14 @@
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
-import { faker } from "@faker-js/faker";
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+import { faker } from '@faker-js/faker';
+import { ConvexError } from 'convex/values';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 export const generateWords = (n: number): string[] => {
-  return faker.word.words(n).split(" ");
+  return faker.word.words(n).split(' ');
 };
 
 export interface TypingSpeedMetrics {
@@ -36,7 +37,7 @@ export function calculateTypingMetrics(
   typedHistory: string[],
   wordList: string[],
   testDurationSeconds: number,
-  withDecimalPoints: boolean = false
+  withDecimalPoints: boolean = false,
 ): TypingSpeedMetrics {
   let correctChars = 0;
   let incorrectChars = 0;
@@ -45,7 +46,7 @@ export function calculateTypingMetrics(
 
   // Calculate correct, incorrect, extra, and missed characters
   typedHistory.forEach((typedWord, index) => {
-    const targetWord = wordList[index] || "";
+    const targetWord = wordList[index] || '';
     for (let i = 0; i < Math.max(targetWord.length, typedWord.length); i++) {
       if (i < typedWord.length) {
         const charIsCorrect =
@@ -63,17 +64,17 @@ export function calculateTypingMetrics(
   const wpm = calculateWpm(
     correctChars,
     testDurationSeconds,
-    withDecimalPoints
+    withDecimalPoints,
   );
   const raw = calculateWpm(
     totalCharsAttempted,
     testDurationSeconds,
-    withDecimalPoints
+    withDecimalPoints,
   );
   const accuracyPercentage = calculateAccuracy(
     correctChars,
     totalCharsAttempted,
-    withDecimalPoints
+    withDecimalPoints,
   );
 
   return {
@@ -92,7 +93,7 @@ export function calculateTypingMetrics(
 function calculateWpm(
   chars: number,
   seconds: number,
-  withDecimalPoints: boolean
+  withDecimalPoints: boolean,
 ): number {
   const wpm = (chars / 5) * (60 / seconds);
   return withDecimalPoints ? wpm : Math.round(wpm);
@@ -101,11 +102,23 @@ function calculateWpm(
 function calculateAccuracy(
   correctChars: number,
   totalCharsAttempted: number,
-  withDecimalPoints: boolean
+  withDecimalPoints: boolean,
 ): number {
   const accuracy = (correctChars / totalCharsAttempted) * 100 || 0;
   return withDecimalPoints ? accuracy : Math.round(accuracy);
 }
+
+export const calculateCompletionPercentage = (
+  typedHistory: string[],
+  wordList: string[],
+): number => {
+  const totalWords = wordList.length;
+  const correctWords = typedHistory.filter(
+    (typedWord, index) => typedWord === wordList[index],
+  ).length;
+
+  return (correctWords / totalWords) * 100;
+};
 
 // Regex to match valid characters for typing test
 // Only alphanumeric characters, hyphen, period, comma, single quote, and space are allowed
@@ -118,14 +131,20 @@ export interface chartTestScore {
 }
 
 export function formatChartData(
-  testScores: chartTestScore[]
+  testScores: chartTestScore[],
 ): { Month: string; WPM: number; RAW: number }[] {
   return testScores.map((score) => ({
-    Month: new Date(score.creationTime).toLocaleDateString("en-US", {
-      month: "short",
-      year: "2-digit",
+    Month: new Date(score.creationTime).toLocaleDateString('en-US', {
+      month: 'short',
+      year: '2-digit',
     }),
     WPM: score.wpm,
     RAW: score.raw,
   }));
+}
+
+export function parseConvexError(error: any) {
+  return error instanceof ConvexError
+    ? (error.data as string)
+    : 'Unexpected error occurred';
 }

@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { Activity, Calculator, Hourglass } from "lucide-react";
+import { Activity, Calculator, Hourglass } from 'lucide-react';
 
 import {
   Card,
@@ -8,7 +8,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -16,18 +16,18 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import Chart from "@/components/chart";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { useAuth } from "@clerk/nextjs";
-import { formatChartData } from "@/lib/utils";
+} from '@/components/ui/table';
+import Chart from '@/components/chart';
+import { useQuery } from 'convex/react';
+import { api } from '@/convex/_generated/api';
+import { useAuth } from '@clerk/nextjs';
+import { formatChartData } from '@/lib/utils';
 
 export default function Dashboard() {
   const { userId } = useAuth();
   const userData = useQuery(api.userData.get, {});
   const mostRecentTest = useQuery(api.testScore.fetchRecentTestScores, {
-    userId: userId ?? "",
+    userId: userId ?? '',
     limit: 10,
   })?.map((test) => ({
     creationTime: test._creationTime,

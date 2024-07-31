@@ -1,6 +1,6 @@
-"use client";
-import { Loading } from "@/components/loading";
-import { AuthLoading, Authenticated } from "convex/react";
+'use client';
+import { Loading } from '@/components/loading';
+import { AuthLoading, Authenticated } from 'convex/react';
 
 export default function DashboardLayout({
   children,

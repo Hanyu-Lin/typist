@@ -1,6 +1,6 @@
-"use client";
-import React, { useMemo } from "react";
-import { cn } from "@/lib/utils";
+'use client';
+import React, { useMemo } from 'react';
+import { cn } from '@/lib/utils';
 
 interface CharacterProps {
   char: string;
@@ -17,17 +17,17 @@ const Character: React.FC<CharacterProps> = ({
 }) => {
   const isCorrect = useMemo(
     () => (isActive ? typedChar === char : registeredChar === char),
-    [isActive, typedChar, registeredChar, char]
+    [isActive, typedChar, registeredChar, char],
   );
   const isTyped = useMemo(
     () => (isActive ? typedChar !== undefined : registeredChar !== undefined),
-    [isActive, typedChar, registeredChar]
+    [isActive, typedChar, registeredChar],
   );
 
   // Conditional styling
   const characterClassName = useMemo(
-    () => cn(isTyped ? (isCorrect ? "text-green-500" : "text-red-500") : ""),
-    [isTyped, isCorrect]
+    () => cn(isTyped ? (isCorrect ? 'text-green-500' : 'text-red-500') : ''),
+    [isTyped, isCorrect],
   );
 
   return <span className={characterClassName}>{char}</span>;

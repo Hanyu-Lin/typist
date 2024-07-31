@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
-import React from "react";
+import { cn } from '@/lib/utils';
+import React from 'react';
 
 interface CaretProps {
   offset: number;
@@ -14,8 +14,8 @@ const Caret: React.FC<CaretProps> = ({ offset, isBlinking }) => {
   return (
     <span
       className={cn(
-        "h-full absolute ml-[-0.45rem]",
-        isBlinking ? "animate-blink" : ""
+        'h-full absolute ml-[-0.45rem]',
+        isBlinking ? 'animate-blink' : '',
       )}
       style={style}
     >

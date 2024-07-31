@@ -1,11 +1,11 @@
-"use client";
-import { motion } from "framer-motion";
-import { Clock } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
-import { useTypingStore } from "@/store/typing-store";
-import { useTimerStore } from "@/store/timer-store";
-import { cn } from "@/lib/utils";
-import { setLocalStorage } from "@/lib/storage-helper";
+'use client';
+import { motion } from 'framer-motion';
+import { Clock } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import { useTypingStore } from '@/stores/typingStore';
+import { useTimerStore } from '@/stores/timerStore';
+import { cn } from '@/lib/utils';
+import { setLocalStorage } from '@/lib/storage-helper';
 
 const TimerToolbar = () => {
   const { inputRef, resetTypingState } = useTypingStore();
@@ -16,8 +16,8 @@ const TimerToolbar = () => {
   const handleSelectTime = (value: number) => {
     if (inputRef?.current) inputRef.current.focus();
     setTimer(value);
-    resetTypingState();
-    setLocalStorage("timer", value);
+    resetTypingState(true);
+    setLocalStorage('timer', value);
   };
 
   const toolbarVariants = {
@@ -46,8 +46,8 @@ const TimerToolbar = () => {
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
                   className={cn(
-                    "px-4 py-2 rounded-lg font-semibold text-primary",
-                    time === value ? "bg-orange-400 " : ""
+                    'px-4 py-2 rounded-lg font-semibold text-primary',
+                    time === value ? 'bg-orange-400 ' : '',
                   )}
                 >
                   {value}

@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { forwardRef } from "react";
-import { Button } from "@/components/ui/button";
-import { Hint } from "@/components/hint";
-import { RotateCw } from "lucide-react";
-import { useTimerStore } from "@/store/timer-store";
-import { useTypingStore } from "@/store/typing-store";
+import React, { forwardRef } from 'react';
+import { Button } from '@/components/ui/button';
+import { Hint } from '@/components/hint';
+import { RotateCw } from 'lucide-react';
+import { useTimerStore } from '@/stores/timerStore';
+import { useTypingStore } from '@/stores/typingStore';
 interface RestartButtonProps {
   focusInput: () => void;
 }
@@ -15,7 +15,7 @@ const RestartButton = forwardRef<HTMLButtonElement, RestartButtonProps>(
     const { resetTypingState } = useTypingStore();
 
     const handleRestart = () => {
-      resetTypingState();
+      resetTypingState(true);
       resetTimeState();
       focusInput();
     };
@@ -32,7 +32,8 @@ const RestartButton = forwardRef<HTMLButtonElement, RestartButtonProps>(
         </Button>
       </Hint>
     );
-  }
+  },
 );
 
+RestartButton.displayName = 'RestartButton';
 export default RestartButton;

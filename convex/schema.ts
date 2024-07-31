@@ -1,5 +1,5 @@
-import { v } from "convex/values";
-import { defineSchema, defineTable } from "convex/server";
+import { v } from 'convex/values';
+import { defineSchema, defineTable } from 'convex/server';
 
 export default defineSchema({
   testScore: defineTable({
@@ -9,7 +9,7 @@ export default defineSchema({
     accuracy: v.number(),
     testDurationSeconds: v.number(),
     wordsTyped: v.number(),
-  }).index("by_userId", ["userId"]),
+  }).index('by_userId', ['userId']),
   userData: defineTable({
     userId: v.string(),
     totalTestsTaken: v.number(),
@@ -18,5 +18,28 @@ export default defineSchema({
     highestWpm: v.number(),
     highestRaw: v.number(),
     highestAccuracy: v.number(),
-  }).index("by_userId", ["userId"]),
+  }).index('by_userId', ['userId']),
+  room: defineTable({
+    wordList: v.array(v.string()),
+    roomId: v.string(),
+    ownerId: v.string(),
+    members: v.array(
+      v.object({
+        userId: v.string(),
+        username: v.string(),
+        progress: v.number(),
+      }),
+    ),
+    initialCountDownEndTime: v.optional(v.number()), // timestamp when the initial count down ends
+    initialCountDownRunning: v.optional(v.boolean()),
+    endTime: v.optional(v.number()), // timestamp when the timer ends
+    timerRunning: v.optional(v.boolean()),
+    winner: v.optional(
+      v.object({
+        id: v.string(),
+        name: v.string(),
+      }),
+    ),
+    resetNotification: v.boolean(),
+  }).index('by_roomId', ['roomId']),
 });
