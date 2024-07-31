@@ -84,10 +84,12 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
     convexWordList,
     setWordList,
     setStrictMode,
+    resetTypingState,
   ]);
 
   useEffect(() => {
     if (roomTimer?.initialCountDownEndTime) {
+      resetTypingState(false);
       const initialTimeLeft = Math.floor(
         (roomTimer.initialCountDownEndTime - Date.now()) / 1000,
       );
