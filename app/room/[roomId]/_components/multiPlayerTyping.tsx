@@ -84,7 +84,6 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
     convexWordList,
     setWordList,
     setStrictMode,
-    resetTypingState,
   ]);
 
   useEffect(() => {
@@ -118,6 +117,7 @@ export default function MultiTypingTest({ roomId }: MultiTypingTestProps) {
     startMainTimer,
     setInitialCountDown,
     setIsInitialCountDownRunning,
+    resetTypingState,
   ]);
 
   useEffect(() => {
