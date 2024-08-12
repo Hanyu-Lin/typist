@@ -26,10 +26,14 @@ const Footer: React.FC = () => {
           <div className=" flex gap-3 items-center justify-between ">
             <div className="flex items-center justify-center gap-2">
               <ModeToggle />
-              <Button size="icon" variant="outline">
-                <a href="https://github.com/Hanyu-Lin/typist" target="_blank">
-                  <Github />
-                </a>
+              <Button
+                size="icon"
+                variant="outline"
+                onClick={() => {
+                  window.open('https://github.com/Hanyu-Lin/typist', '_blank');
+                }}
+              >
+                <Github />
               </Button>
             </div>
 
