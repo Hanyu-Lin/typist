@@ -24,6 +24,7 @@ import { api } from '@/convex/_generated/api';
 import { useAuth } from '@clerk/nextjs';
 import { formatChartData } from '@/lib/utils';
 import { toast } from 'sonner';
+import { Skimmer } from '@/components/ui/skimmer';
 
 interface MetricCardProps {
   title: string;
@@ -44,12 +45,8 @@ const MetricCard: React.FC<MetricCardProps> = ({
       {icon}
     </CardHeader>
     <CardContent>
-      <div className="text-2xl font-bold">
-        {isLoading ? (
-          <span className="animate-pulse">Loading...</span>
-        ) : (
-          value ?? 'N/A'
-        )}
+      <div className="text-2xl font-bold h-8 w-16">
+        {isLoading ? <Skimmer /> : value ?? 'N/A'}
       </div>
     </CardContent>
   </Card>
@@ -83,14 +80,14 @@ const BestMetrics: React.FC<BestMetricsProps> = ({ userData, isLoading }) => (
           </TableRow>
         </TableHeader>
         <TableBody>
-          {['WPM', 'RAW', 'Accuracy'].map((metric) => (
+          {['Wpm', 'Raw', 'Accuracy'].map((metric) => (
             <TableRow key={metric}>
               <TableCell>
                 <div className="font-medium">{metric}</div>
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell className="text-right h-6 w-8">
                 {isLoading ? (
-                  <span className="animate-pulse">Loading...</span>
+                  <Skimmer />
                 ) : (
                   userData?.[`highest${metric}` as keyof typeof userData] ??
                   'N/A'
@@ -134,7 +131,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (userDataError || mostRecentTestError) {
-      toast.error('No data found. Please take a test to generate data.');
+      toast.info('No data found. Please take a test to generate data.');
     }
   }, [userDataError, mostRecentTestError]);
 
