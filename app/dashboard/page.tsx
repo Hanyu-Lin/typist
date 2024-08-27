@@ -24,7 +24,7 @@ import { api } from '@/convex/_generated/api';
 import { useAuth } from '@clerk/nextjs';
 import { formatChartData } from '@/lib/utils';
 import { toast } from 'sonner';
-import { Skimmer } from '@/components/ui/skimmer';
+import { SkeletonLoader } from '@/components/ui/skeleton-loader';
 
 interface MetricCardProps {
   title: string;
@@ -46,7 +46,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
     </CardHeader>
     <CardContent>
       <div className="text-2xl font-bold h-8 w-16">
-        {isLoading ? <Skimmer /> : value ?? 'N/A'}
+        {isLoading ? <SkeletonLoader /> : value ?? 'N/A'}
       </div>
     </CardContent>
   </Card>
@@ -87,7 +87,7 @@ const BestMetrics: React.FC<BestMetricsProps> = ({ userData, isLoading }) => (
               </TableCell>
               <TableCell className="text-right h-6 w-8">
                 {isLoading ? (
-                  <Skimmer />
+                  <SkeletonLoader />
                 ) : (
                   userData?.[`highest${metric}` as keyof typeof userData] ??
                   'N/A'

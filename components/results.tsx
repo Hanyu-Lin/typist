@@ -1,3 +1,4 @@
+'use client';
 import {
   CardTitle,
   CardDescription,
@@ -5,10 +6,11 @@ import {
   CardContent,
   Card,
 } from '@/components/ui/card';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { CircleCheck, CircleX, Keyboard } from 'lucide-react';
 import { Hint } from '@/components/hint';
 import { TypingSpeedMetrics } from '@/lib/utils';
+import { SkeletonLoader } from '@/components/ui/skeleton-loader';
 
 const Results: React.FC<TypingSpeedMetrics> = ({
   wpm,
@@ -16,8 +18,23 @@ const Results: React.FC<TypingSpeedMetrics> = ({
   accuracy,
   charactersStats,
 }) => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+
+    // Clean up the timer
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return <SkeletonLoader className="w-1/2 h-64 mt-[4.75rem]" />;
+  }
+
   return (
-    <Card className="flex flex-col w-1/2 max-w-lg items-center justify-center animate-slow-fade-in">
+    <Card className="flex flex-col w-1/2 h-64 items-center justify-center">
       <CardHeader className="pb-0 items-center">
         <CardTitle>Results</CardTitle>
         <CardDescription>See your performance</CardDescription>
