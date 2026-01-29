@@ -23,8 +23,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <Suspense fallback={<Loading />}>
-        <body className={inter.className}>
+      <body className={inter.className} suppressHydrationWarning>
+        <Suspense fallback={<Loading />}>
           <ConvexClerkProvider>
             <ThemeProvider attribute="class">
               <Navbar />
@@ -33,8 +33,8 @@ export default function RootLayout({
               <Toaster position="top-center" richColors />
             </ThemeProvider>
           </ConvexClerkProvider>
-        </body>
-      </Suspense>
+        </Suspense>
+      </body>
     </html>
   );
 }
